@@ -1,0 +1,86 @@
+﻿@model SistemaCE.Models.Persona
+
+@{
+    ViewData["Title"] = "Crear Persona";
+}
+
+<div class="max-w-3xl mx-auto px-4 py-8">
+
+    <!-- HEADER -->
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">
+        Crear Persona
+    </h1>
+
+    <!-- CARD -->
+    <div class="bg-white shadow-lg rounded-xl p-6">
+
+        <form asp-action="Create" class="space-y-5">
+
+            <!-- VALIDATION -->
+            <div asp-validation-summary="ModelOnly"
+                 class="text-red-500 text-sm"></div>
+
+            <!-- NOMBRE -->
+            <div>
+                <label asp-for="Nombre" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Nombre"
+                       class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                <span asp-validation-for="Nombre" class="text-red-500 text-xs"></span>
+            </div>
+
+            <!-- APELLIDO PATERNO -->
+            <div>
+                <label asp-for="ApellidoPaterno" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="ApellidoPaterno"
+                       class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                <span asp-validation-for="ApellidoPaterno" class="text-red-500 text-xs"></span>
+            </div>
+
+            <!-- APELLIDO MATERNO -->
+            <div>
+                <label asp-for="ApellidoMaterno" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="ApellidoMaterno"
+                       class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                <span asp-validation-for="ApellidoMaterno" class="text-red-500 text-xs"></span>
+            </div>
+
+            <!-- CURP -->
+            <div>
+                <label asp-for="Curp" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Curp"
+                       class="mt-1 w-full px-4 py-2 border rounded-lg uppercase focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                <span asp-validation-for="Curp" class="text-red-500 text-xs"></span>
+            </div>
+
+            <!-- FECHA -->
+            <div>
+                <label asp-for="FechaNacimiento" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="FechaNacimiento" type="date"
+                       class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                <span asp-validation-for="FechaNacimiento" class="text-red-500 text-xs"></span>
+            </div>
+
+            <!-- BOTONES -->
+            <div class="flex justify-between items-center pt-4">
+
+                <a asp-action="Index"
+                   class="text-gray-600 hover:text-gray-800">
+                    ← Volver
+                </a>
+
+                <button type="submit"
+                        class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition">
+                    Guardar
+                </button>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,78 @@
+﻿@model IEnumerable<SistemaCE.Models.Grupo>
+
+@{
+    ViewData["Title"] = "Grupos";
+}
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Grupos</h1>
+        <a asp-action="Create"
+           class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
+            + Nuevo Grupo
+        </a>
+    </div>
+
+    <!-- TABLE -->
+    <div class="bg-white shadow-md rounded-xl overflow-hidden">
+        <table class="min-w-full text-sm text-gray-600">
+
+            <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+                <tr>
+                    <th class="px-6 py-3">Grupo</th>
+                    <th class="px-6 py-3">Cuatrimestre</th>
+                    <th class="px-6 py-3">Turno</th>
+                    <th class="px-6 py-3">Carrera</th>
+                    <th class="px-6 py-3 text-center">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y">
+
+                @foreach (var item in Model)
+                {
+                    <tr class="hover:bg-gray-50">
+
+                        <td class="px-6 py-4 font-medium text-gray-900">
+                            @item.Grupo1
+                        </td>
+
+                        <td class="px-6 py-4">
+                            @item.Cuatrimestre
+                        </td>
+
+                        <td class="px-6 py-4">
+                            @item.Turno
+                        </td>
+
+                        <td class="px-6 py-4">
+                            @item.IdCarreraNavigation?.Nombre
+                        </td>
+
+                        <td class="px-6 py-4 text-center space-x-2">
+
+                            <a asp-action="Edit" asp-route-id="@item.IdGrupo"
+                               class="bg-yellow-400 text-white px-3 py-1 rounded">
+                                Editar
+                            </a>
+
+                            <a asp-action="Details" asp-route-id="@item.IdGrupo"
+                               class="bg-blue-500 text-white px-3 py-1 rounded">
+                                Ver
+                            </a>
+
+                            <a asp-action="Delete" asp-route-id="@item.IdGrupo"
+                               class="bg-red-500 text-white px-3 py-1 rounded">
+                                Eliminar
+                            </a>
+
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>

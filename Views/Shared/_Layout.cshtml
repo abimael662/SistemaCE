@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SistemaCE</title>
+
+    <link href="~/css/output.css" rel="stylesheet" />
+</head>
+@await RenderSectionAsync("Scripts", required: false)
+<body class="bg-gray-100">
+
+    <header class="bg-white shadow">
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-white border-t mt-10">
+    </footer>
+
+</body>
+</html>

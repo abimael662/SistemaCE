@@ -1,0 +1,71 @@
+﻿@model SistemaCE.Models.Estudiante
+
+@{
+    ViewData["Title"] = "Crear Estudiante";
+}
+
+<div class="max-w-xl mx-auto mt-8">
+    <h1 class="text-2xl font-bold mb-4">Crear Estudiante</h1>
+
+    <form asp-action="Create" method="post" class="space-y-4">
+
+        <!-- ERRORES -->
+        <div asp-validation-summary="All" class="text-red-500 text-sm"></div>
+
+        <!-- PERSONA -->
+        <div>
+            <label asp-for="IdEstudiante" class="block font-medium"></label>
+            <select asp-for="IdEstudiante"
+                    asp-items="ViewBag.IdEstudiante"
+                    class="w-full border px-3 py-2 rounded">
+            </select>
+        </div>
+
+        <!-- GRUPO -->
+        <div>
+            <label asp-for="IdGrupo" class="block font-medium"></label>
+            <select asp-for="IdGrupo"
+                    asp-items="ViewBag.IdGrupo"
+                    class="w-full border px-3 py-2 rounded">
+            </select>
+        </div>
+
+        <!-- MATRICULA -->
+        <div>
+            <label asp-for="Matricula"></label>
+            <input asp-for="Matricula" class="w-full border px-3 py-2 rounded" />
+            <span asp-validation-for="Matricula" class="text-red-500 text-sm"></span>
+        </div>
+
+        <!-- FECHA -->
+        <div>
+            <label asp-for="FechaIngreso"></label>
+            <input asp-for="FechaIngreso" type="date"
+                   class="w-full border px-3 py-2 rounded" />
+            <span asp-validation-for="FechaIngreso" class="text-red-500 text-sm"></span>
+        </div>
+
+        <!-- ESTATUS -->
+        <div>
+            <label asp-for="Estatus"></label>
+            <input asp-for="Estatus" class="w-full border px-3 py-2 rounded" />
+            <span asp-validation-for="Estatus" class="text-red-500 text-sm"></span>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="flex justify-between">
+            <a asp-action="Index" class="text-gray-600">← Volver</a>
+            <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded">
+                Guardar
+            </button>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

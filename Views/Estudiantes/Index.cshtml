@@ -1,0 +1,89 @@
+﻿@model IEnumerable<SistemaCE.Models.Estudiante>
+
+@{
+    ViewData["Title"] = "Estudiantes";
+}
+
+<div class="max-w-6xl mx-auto mt-10">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Estudiantes</h1>
+
+        <a asp-action="Create"
+           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + Nuevo Estudiante
+        </a>
+    </div>
+
+    <!-- TABLA -->
+    <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+        <table class="min-w-full text-sm text-left">
+
+            <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+                <tr>
+                    <th class="px-6 py-3">Matrícula</th>
+                    <th class="px-6 py-3">Fecha Ingreso</th>
+                    <th class="px-6 py-3">Estatus</th>
+                    <th class="px-6 py-3">Estudiante</th>
+                    <th class="px-6 py-3">Grupo</th>
+                    <th class="px-6 py-3 text-center">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y">
+
+                @foreach (var item in Model)
+                {
+                    <tr class="hover:bg-gray-50">
+
+                        <td class="px-6 py-4">
+                            @item.Matricula
+                        </td>
+
+                        <td class="px-6 py-4">
+                            @item.FechaIngreso?.ToString("yyyy-MM-dd")
+                        </td>
+
+                        <td class="px-6 py-4">
+                            @item.Estatus
+                        </td>
+
+                        <!-- 🔥 NOMBRE DE PERSONA -->
+                        <td class="px-6 py-4 font-medium">
+                            @item.IdEstudianteNavigation?.Nombre
+                        </td>
+
+                        <!-- 🔥 GRUPO BONITO -->
+                        <td class="px-6 py-4">
+                            @item.IdGrupoNavigation?.Grupo1
+                        </td>
+
+                        <!-- ACCIONES -->
+                        <td class="px-6 py-4 text-center space-x-2">
+
+                            <a asp-action="Edit" asp-route-id="@item.IdEstudiante"
+                               class="text-blue-600 hover:underline">
+                                Editar
+                            </a>
+
+                            <a asp-action="Details" asp-route-id="@item.IdEstudiante"
+                               class="text-green-600 hover:underline">
+                                Detalles
+                            </a>
+
+                            <a asp-action="Delete" asp-route-id="@item.IdEstudiante"
+                               class="text-red-600 hover:underline">
+                                Eliminar
+                            </a>
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
