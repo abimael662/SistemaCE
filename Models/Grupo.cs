@@ -22,4 +22,8 @@ public partial class Grupo
     public virtual Carrera? IdCarreraNavigation { get; set; }
 
     public virtual ICollection<Inscripcion> Inscripcions { get; set; } = new List<Inscripcion>();
+    
+    //Agregado los ultimos dos por mi, no se si es necesario pero bueno
+    public virtual ICollection<CalificacionAlumno> CalificacionAlumnos { get; set; } = new List<CalificacionAlumno>();
+    public virtual ICollection<DocenteMateria> DocenteMaterias { get; set; } = new List<DocenteMateria>();
 }

@@ -56,7 +56,8 @@
             <div>
                 <label asp-for="FechaNacimiento" class="block text-sm font-medium text-gray-700"></label>
                 <input asp-for="FechaNacimiento" type="date"
-                       class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                       class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                       max="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="FechaNacimiento" class="text-red-500 text-xs"></span>
             </div>
 
@@ -64,7 +65,7 @@
             <div class="flex justify-between items-center pt-4">
 
                 <a asp-action="Index"
-                   class="text-gray-600 hover:text-gray-800">
+                       class="text-gray-600 hover:text-gray-800">
                     ← Volver
                 </a>
 
@@ -84,3 +85,80 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @model SistemaCE.Models.Persona
+
+<h1>Crear Persona</h1>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="ApellidoPaterno"></label>
+        <input asp-for="ApellidoPaterno" class="form-control" />
+        <span asp-validation-for="ApellidoPaterno" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="ApellidoMaterno"></label>
+        <input asp-for="ApellidoMaterno" class="form-control" />
+        <span asp-validation-for="ApellidoMaterno" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Tipo de Persona</label>
+        <select id="TipoPersona" name="TipoPersona" class="form-control">
+            <option value="">Seleccione</option>
+            <option value="Docente">Docente</option>
+            <option value="Estudiante">Estudiante</option>
+            <option value="Administrativo">Administrativo</option>
+        </select>
+    </div>
+    <div id="partialContainer"></div>
+
+    <div id="docentePartial" style="display:none;">
+        @Html.Partial("Partial/Docente", new SistemaCE.Models.Docente())
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+   
+    <script>
+        document.getElementById("TipoPersona").addEventListener("change", function () {
+            var tipo = this.value;
+            var container = document.getElementById("partialContainer");
+            container.innerHTML = "";
+
+            if (tipo === "Docente") {
+                var html = document.getElementById("docentePartial").innerHTML;
+                container.innerHTML = html;
+            }
+        });
+    </script>
+} *@
