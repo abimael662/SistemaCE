@@ -1,4 +1,84 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Login";
+    Layout = "_Layout";
 }
-<div>Hola</div>
+
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+
+        <!-- Logo / Título -->
+        <div class="text-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">
+                Bienvenido
+            </h2>
+            <p class="text-gray-500 text-sm mt-1">
+                Inicia sesión en tu cuenta
+            </p>
+        </div>
+
+        <form asp-action="Login" method="post" class="space-y-5">
+
+            <!-- Email -->
+            <div>
+                <label class="block text-sm font-medium text-gray-600">
+                    Correo electrónico
+                </label>
+
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <!-- Icono correo -->
+                        ✉️
+                    </span>
+                    <input type="email" name="Email"
+                           class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                           placeholder="ejemplo@gmail.com" required />
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div>
+                <label class="block text-sm font-medium text-gray-600">
+                    Contraseña
+                </label>
+
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        🔒
+                    </span>
+                    <input type="password" name="Password"
+                           class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                           placeholder="********" required />
+                </div>
+            </div>
+
+            <!-- Recordarme -->
+            <div class="flex items-center justify-between text-sm">
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="rounded text-purple-600 focus:ring-purple-500" />
+                    <span class="text-gray-600">Recordarme</span>
+                </label>
+
+                <a href="#" class="text-purple-600 hover:underline">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </div>
+
+            <!-- Botón -->
+            <button type="submit"
+                    class="w-full bg-purple-600 text-black py-2 rounded-lg hover:bg-purple-700 transition duration-300 font-medium">
+                Iniciar sesión
+            </button>
+
+            <!-- Registro -->
+            <div class="text-center text-sm text-gray-500">
+                ¿No tienes cuenta?
+                <a asp-action="Register" class="text-purple-600 hover:underline font-medium">
+                    Regístrate
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
