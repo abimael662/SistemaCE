@@ -1,0 +1,22 @@
+﻿@model SistemaCE.Models.Docente
+
+<h4>Datos de Docente</h4>
+<hr />
+
+<div class="form-group">
+    <label asp-for="CedulaProfesional"></label>
+    <input asp-for="CedulaProfesional" class="form-control" />
+    <span asp-validation-for="CedulaProfesional" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Rfc"></label>
+    <input asp-for="Rfc" class="form-control" />
+    <span asp-validation-for="Rfc" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Sueldo"></label>
+    <input asp-for="Sueldo" type="number" step="0.01" class="form-control" />
+    <span asp-validation-for="Sueldo" class="text-danger"></span>
+</div>

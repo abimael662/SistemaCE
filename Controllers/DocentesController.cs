@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using SistemaCE.Models;
 
 namespace SistemaCE.Controllers
 {
+    [Authorize]
     public class DocentesController : Controller
     {
         private readonly SceContext _context;
@@ -100,6 +102,14 @@ namespace SistemaCE.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
+            else if (!ModelState.IsValid)
+            {
+                var errores = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var e in errores)
+                {
+                    Console.WriteLine(e.ErrorMessage);
+                }
+            }
 
             // 🔁 RECARGAR SELECTS SI FALLA
             var personas = _context.Personas
@@ -113,7 +123,8 @@ namespace SistemaCE.Controllers
             ViewBag.IdDocente = new SelectList(personas, "IdPersona", "NombreCompleto", docente.IdDocente);
 
             var empleados = _context.Empleados.ToList();
-            ViewBag.NumeroEmpleado = new SelectList(empleados, "IdEmpleado", "NumeroEmpleado", docente.NumeroEmpleado);
+            ViewBag.NumeroEmpleado = new SelectList(empleados, "IdEmpleado", "TipoEmpleado", docente.NumeroEmpleado);
+            //ViewBag.NumeroEmpleado = new SelectList(empleados, "IdEmpleado", "NumeroEmpleado", docente.NumeroEmpleado);
 
             return View(docente);
         }
