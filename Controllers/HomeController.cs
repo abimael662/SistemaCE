@@ -40,6 +40,11 @@ namespace SistemaCE.Controllers
             }
         }
 
+        public IActionResult Main()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

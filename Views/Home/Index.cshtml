@@ -14,7 +14,7 @@
             </h2>
         </div>
 
-        <form asp-action="Login" method="post" class="space-y-5">
+        <form asp-action="Login" asp-controller="Login" method="post" class="space-y-5">
 
             <!-- Email -->
             <div>
@@ -26,7 +26,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <!-- Icono correo -->
                     </span>
-                    <input type="email" name="Email"
+                    <input type="email" name="usuario"
                            class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                            placeholder="ejemplo@gmail.com" required />
                 </div>
@@ -42,7 +42,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <!-- Icono candado -->
                     </span>
-                    <input type="password" name="Password"
+                    <input type="password" name="password"
                            class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                            placeholder="********" required />
                 </div>

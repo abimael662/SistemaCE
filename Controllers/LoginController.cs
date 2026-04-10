@@ -66,7 +66,7 @@ namespace SistemaCE.Controllers
                 if (persona != null)
                 {
                     await GuardarSesionUsuario(persona);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Main", "Home");
                 }
 
                 ViewBag.Error = "Credenciales incorrectas";
