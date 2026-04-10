@@ -53,6 +53,18 @@ namespace SistemaCE.Controllers
             // 🔥 DEBUG AQUÍ
             var personas = _context.Personas.ToList();
             var empleados = _context.Empleados.ToList();
+            
+
+            /// Verificamos que los usuarios que aparescan no esten registrados @GG
+            var personasOcupadas = _context.Docentes.Select(d => d.IdDocente)
+                .Union(_context.Administrativos.Select(a => a.IdAdministrativo))
+                .Union(_context.Estudiantes.Select(e => e.IdEstudiante))
+                .ToList();
+
+            /// Seleccionamos a todas las personas que podemos registrar como docente @GG
+            var personasDisponibles = personas
+                .Where(p => !personasOcupadas.Contains(p.IdPersona))
+                .ToList();
 
             if (personas == null || !personas.Any())
             {
@@ -64,8 +76,8 @@ namespace SistemaCE.Controllers
                 throw new Exception("NO HAY EMPLEADOS");
             }
 
-            // 👇 YA TU CÓDIGO NORMAL
-            var personasSelect = personas.Select(p => new
+            /// Creamos una variable que almacene a todas las personas con sis respectivos datos
+            var personasSelect = personasDisponibles.Select(p => new
             {
                 p.IdPersona,
                 NombreCompleto = (p.Nombre ?? "") + " " + (p.ApellidoPaterno ?? "") + " " + (p.ApellidoMaterno ?? "")
@@ -83,35 +95,61 @@ namespace SistemaCE.Controllers
         // POST: Docentes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdDocente,NumeroEmpleado,CedulaProfesional,Rfc,Sueldo")] Docente docente)
+        //public async Task<IActionResult> Create([Bind("IdDocente,NumeroEmpleado,CedulaProfesional,Rfc,Sueldo")] Docente docente)
+        public async Task<IActionResult> Create([Bind("IdDocente,CedulaProfesional,Rfc,Sueldo")] Docente docente)
         {
             if (ModelState.IsValid)
             {
+                /// Obtenemos el id de la persona o docente que se va a registar @GG
                 var persona = await _context.Personas.FindAsync(docente.IdDocente);
 
+                /// Si no existe la persona mandamos una exepcion o un error que la persona que registre podra visualizar @GG
                 if (persona == null)
                 {
                     ModelState.AddModelError("", "La persona no existe");
                 }
                 else
                 {
-                    docente.IdDocenteNavigation = persona;
 
-                    _context.Docentes.Add(docente);
+                    /// Creamos el numero de empleado con una lingitud de 10 @GG
+                    string area = "SEC";
+                    var random = new Random();
+                    string numeroEmpleado;
+
+                    /// Generar número único @GG
+                    do
+                    {
+                        int numero = random.Next(0, 10000);
+
+                        /// el D7 muestra o son los digitos que se usaran para hacer el numero de empleado aleatorio en total son 10 digitos si sumamos el string area @GG
+                        numeroEmpleado = $"{area}{numero:D7}";
+                    }
+                    /// Con esto solo se registra si el numero de empleado no existe @GG
+                    while (await _context.Empleados.AnyAsync(e => e.TipoEmpleado == numeroEmpleado));
+
+
+                    /// Crear o registrar al empleado @GG
+                    var empleado = new Empleado
+                    {
+                        TipoEmpleado = numeroEmpleado
+                    };
+
+                    await _context.Empleados.AddAsync(empleado);
+                    await _context.SaveChangesAsync(); // importante para obtener el id y usarlo despues @GG
+
+                    /// Relacionar los datos
+                    docente.IdDocenteNavigation = persona;
+                    docente.NumeroEmpleadoNavigation = empleado;
+
+                    /// Guardamos todos los cambios y hacemos el registro
+                    await _context.Docentes.AddAsync(docente);
                     await _context.SaveChangesAsync();
+
                     return RedirectToAction(nameof(Index));
                 }
             }
-            else if (!ModelState.IsValid)
-            {
-                var errores = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var e in errores)
-                {
-                    Console.WriteLine(e.ErrorMessage);
-                }
-            }
 
-            // 🔁 RECARGAR SELECTS SI FALLA
+            // 🔁 Recargar selects si falla
             var personas = _context.Personas
                 .Select(p => new
                 {
@@ -124,11 +162,9 @@ namespace SistemaCE.Controllers
 
             var empleados = _context.Empleados.ToList();
             ViewBag.NumeroEmpleado = new SelectList(empleados, "IdEmpleado", "TipoEmpleado", docente.NumeroEmpleado);
-            //ViewBag.NumeroEmpleado = new SelectList(empleados, "IdEmpleado", "NumeroEmpleado", docente.NumeroEmpleado);
 
             return View(docente);
         }
-
         // GET: Docentes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

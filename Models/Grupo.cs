@@ -15,15 +15,17 @@ public partial class Grupo
 
     public string? Turno { get; set; }
 
+    public virtual ICollection<CalificacionAlumno> CalificacionAlumnos { get; set; } = new List<CalificacionAlumno>();
+
     public virtual ICollection<Certificado> Certificados { get; set; } = new List<Certificado>();
+
+    public virtual ICollection<DocenteMateriaGrupo> DocenteMateriaGrupos { get; set; } = new List<DocenteMateriaGrupo>();
 
     public virtual ICollection<Estudiante> Estudiantes { get; set; } = new List<Estudiante>();
 
     public virtual Carrera? IdCarreraNavigation { get; set; }
 
     public virtual ICollection<Inscripcion> Inscripcions { get; set; } = new List<Inscripcion>();
-    
-    //Agregado los ultimos dos por mi, no se si es necesario pero bueno
-    public virtual ICollection<CalificacionAlumno> CalificacionAlumnos { get; set; } = new List<CalificacionAlumno>();
-    public virtual ICollection<DocenteMateria> DocenteMaterias { get; set; } = new List<DocenteMateria>();
+
+    public virtual ICollection<SesionClase> SesionClases { get; set; } = new List<SesionClase>();
 }

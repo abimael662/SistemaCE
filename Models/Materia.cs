@@ -11,6 +11,7 @@ public partial class Materia
 
     public virtual ICollection<CalificacionAlumno> CalificacionAlumnos { get; set; } = new List<CalificacionAlumno>();
 
-    //Agregado por mi @GG
-    public virtual ICollection<DocenteMateria> DocenteMaterias { get; set; } = new List<DocenteMateria>();
+    public virtual ICollection<DocenteMateriaGrupo> DocenteMateriaGrupos { get; set; } = new List<DocenteMateriaGrupo>();
+
+    public virtual ICollection<SesionClase> SesionClases { get; set; } = new List<SesionClase>();
 }

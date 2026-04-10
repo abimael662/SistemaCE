@@ -41,6 +41,7 @@ namespace SistemaCE.Controllers
                 .Include(e => e.IdEstudianteNavigation)
                 .Include(e => e.IdGrupoNavigation)
                 .FirstOrDefaultAsync(m => m.IdEstudiante == id);
+
             if (estudiante == null)
             {
                 return NotFound();
@@ -53,9 +54,23 @@ namespace SistemaCE.Controllers
         public IActionResult Create()
         {
             // 🔥 SOLO PERSONAS QUE NO SON ESTUDIANTES
-            var personasDisponibles = _context.Personas
-                .Where(p => !_context.Estudiantes
-                    .Any(e => e.IdEstudiante == p.IdPersona))
+            //var personasDisponibles = _context.Personas
+            //    .Where(p => !_context.Estudiantes
+            //        .Any(e => e.IdEstudiante == p.IdPersona))
+            //    .ToList();
+
+            /// Obtenemos todas las personas @GG
+            var personas = _context.Personas.ToList();
+
+            /// Verificamos que los usuarios que aparescan no esten registrados @GG
+            var personasOcupadas = _context.Estudiantes.Select(d => d.IdEstudiante)
+                .Union(_context.Administrativos.Select(a => a.IdAdministrativo))
+                .Union(_context.Docentes.Select(e => e.IdDocente))
+                .ToList();
+
+            /// Seleccionamos a todas las personas que podemos registrar como estudiante @GG
+            var personasDisponibles = personas
+                .Where(p => !personasOcupadas.Contains(p.IdPersona))
                 .ToList();
 
             ViewData["IdEstudiante"] = new SelectList(personasDisponibles, "IdPersona", "Nombre");
@@ -69,7 +84,7 @@ namespace SistemaCE.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdEstudiante,IdGrupo,Matricula,FechaIngreso,Estatus")] Estudiante estudiante)
+        public async Task<IActionResult> Create([Bind("IdEstudiante,IdGrupo,FechaIngreso,Estatus")] Estudiante estudiante)
         {
             if (ModelState.IsValid)
             {
@@ -85,6 +100,12 @@ namespace SistemaCE.Controllers
                     }
                     else
                     {
+
+                        /// Generar número único @GG
+                        var random = new Random();
+                        int matricula = random.Next(0, 1000000000);
+
+                        estudiante.Matricula = matricula;
                         // 🔥 ASIGNAR la relación correctamente
                         estudiante.IdEstudianteNavigation = persona;
 

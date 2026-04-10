@@ -17,12 +17,13 @@ public partial class Docente
 
     public virtual ICollection<CalificacionAlumno> CalificacionAlumnos { get; set; } = new List<CalificacionAlumno>();
 
+    public virtual ICollection<DocenteMateriaGrupo> DocenteMateriaGrupos { get; set; } = new List<DocenteMateriaGrupo>();
+
+    public virtual Persona IdDocenteNavigation { get; set; } = null!;
+
     public virtual Empleado? NumeroEmpleadoNavigation { get; set; }
 
-    public virtual ICollection<Especialidad> IdEspecialidads { get; set; } = new List<Especialidad>();
+    public virtual ICollection<SesionClase> SesionClases { get; set; } = new List<SesionClase>();
 
-    //Checar le puse que puede ser nulo
-    //public virtual Persona? IdDocenteNavigation { get; set; } = null!;
-    public virtual ICollection<DocenteMateria> DocenteMaterias { get; set; } = new List<DocenteMateria>();
-    public virtual Persona? IdDocenteNavigation { get; set; }
+    public virtual ICollection<Especialidad> IdEspecialidads { get; set; } = new List<Especialidad>();
 }

@@ -16,7 +16,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie(options => { options.LoginPath = "/Login/Index"; });
+}).AddCookie(options => { options.LoginPath = "/Login"; });
 
 
 var app = builder.Build();
@@ -33,6 +33,20 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+//Agregue esto no se si sirva @GG
+//app.Use(async (context, next) =>
+//{
+//    if (context.User.Identity != null &&
+//        context.User.Identity.IsAuthenticated &&
+//        context.Request.Path.StartsWithSegments("/Login", StringComparison.OrdinalIgnoreCase))
+//    {
+//        context.Response.Redirect("/Home");
+//        return;
+//    }
+
+//    await next();
+//});
+    
 app.MapStaticAssets();
 
 app.MapControllerRoute(
