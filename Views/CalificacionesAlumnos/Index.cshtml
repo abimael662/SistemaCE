@@ -4,99 +4,110 @@
     ViewData["Title"] = "Index";
 }
 
+@functions {
+    string CalificacionLiteral(double? valor)
+    {
+        if (valor == null || valor == 0) return "SE";
+        if (valor >= 0 && valor < 7) return "NA";
+        if (valor >= 7 && valor < 8) return "SA";
+        if (valor >= 8 && valor < 9) return "DE";
+        if (valor >= 9) return "AU";
+        return "SE";
+    }
+}
+
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Docente
-            </th>
-            <th>
-                Estudiante
-            </th>
-            <th>
-                Materia
-            </th>
-            <th>
-                Grupo
-            </th>
-            <th>
-                Primer Parcial
-            </th>
-            <th>
-                Segundo Parcial
-            </th>
-            <th>
-                Tercer Parcial
-            </th>
-            <th>
-                Promedio Final
-            </th>
-            @* <th>
-                @Html.DisplayNameFor(model => model.IdDocenteNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdEstudianteNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdMateriaNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Parcial1)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Parcial2)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Parcial3)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PromedioFinal)
-            </th> *@
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<form method="get" asp-action="Index">
+    <label for="grupoSeleccionado">Seleccionar Grupo:</label>
+    <select id="grupoSeleccionado" name="grupoId" class="form-select" onchange="this.form.submit()">
+        <option value="">-- Todos los grupos --</option>
+        @foreach (var grupo in ViewBag.Grupos)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IdDocenteNavigation.IdDocenteNavigation.Nombre)
-                </td>
-                <td>
-                    @* @Html.DisplayFor(modelItem => item.IdEstudianteNavigation.IdEstudiante) *@
-                    @Html.DisplayFor(modelItem => item.IdEstudianteNavigation.IdEstudianteNavigation.Nombre)
-                </td>
-                <td>
-                    @* @Html.DisplayFor(modelItem => item.IdMateriaNavigation.IdMateria) *@
-                    @Html.DisplayFor(modelItem => item.IdMateriaNavigation.Nombre)
-                </td>
-                <td>
-                    @* @Html.DisplayFor(modelItem => item.IdMateriaNavigation.IdMateria) *@
-                    @Html.DisplayFor(modelItem => item.IdGrupoNavigation.Grupo1)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Parcial1)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Parcial2)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Parcial3)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PromedioFinal)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdCalificacion">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.IdCalificacion">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdCalificacion">Delete</a>
-                </td>
-            </tr>
+            <option value="@grupo.IdGrupo" selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? true.ToString().ToLower() : null)">@grupo.Grupo1</option>
         }
-    </tbody>
-</table>
+    </select>
+</form>
+
+<h3>Datos del profesor</h3>
+<p>Nombre: @ViewBag.Docente</p>
+<p>División: @ViewBag.Division</p>
+
+<form asp-action="GuardarCalificaciones" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Docente</th>
+                <th>Estudiante</th>
+                <th>Materia</th>
+                <th>Grupo</th>
+                <th>Primer Parcial</th>
+                <th>Segundo Parcial</th>
+                <th>Tercer Parcial</th>
+                <th>Promedio Final</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                var item = Model.ElementAt(i);
+                <tr>
+                    <td>
+                        @(item.IdDocenteNavigation?.IdDocenteNavigation?.Nombre ?? "")
+                        @(item.IdDocenteNavigation?.IdDocenteNavigation?.ApellidoPaterno ?? "")
+                        @(item.IdDocenteNavigation?.IdDocenteNavigation?.ApellidoMaterno ?? "")
+                    </td>
+                    <td>
+                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.Nombre ?? "")
+                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoPaterno ?? "")
+                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoMaterno ?? "")
+                    </td>
+                    <td>@item.IdMateriaNavigation?.Nombre</td>
+                    <td>@item.IdGrupoNavigation?.Grupo1</td>
+
+                    <td>
+                        <select name="calificaciones[@i].Parcial1" class="form-select">
+                            <option value="0" selected="@(item.Parcial1 == 0 ? true.ToString().ToLower() : null)">SE</option>
+                            <option value="7" selected="@(item.Parcial1 == 7 ? true.ToString().ToLower() : null)">NA</option>
+                            <option value="8" selected="@(item.Parcial1 == 8 ? true.ToString().ToLower() : null)">SA</option>
+                            <option value="9" selected="@(item.Parcial1 == 9 ? true.ToString().ToLower() : null)">DE</option>
+                            <option value="10" selected="@(item.Parcial1 == 10 ? true.ToString().ToLower() : null)">AU</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="calificaciones[@i].Parcial2" class="form-select">
+                            <option value="0" selected="@(item.Parcial2 == 0 ? true.ToString().ToLower() : null)">SE</option>
+                            <option value="7" selected="@(item.Parcial2 == 7 ? true.ToString().ToLower() : null)">NA</option>
+                            <option value="8" selected="@(item.Parcial2 == 8 ? true.ToString().ToLower() : null)">SA</option>
+                            <option value="9" selected="@(item.Parcial2 == 9 ? true.ToString().ToLower() : null)">DE</option>
+                            <option value="10" selected="@(item.Parcial2 == 10 ? true.ToString().ToLower() : null)">AU</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="calificaciones[@i].Parcial3" class="form-select">
+                            <option value="0" selected="@(item.Parcial3 == 0 ? true.ToString().ToLower() : null)">SE</option>
+                            <option value="7" selected="@(item.Parcial3 == 7 ? true.ToString().ToLower() : null)">NA</option>
+                            <option value="8" selected="@(item.Parcial3 == 8 ? true.ToString().ToLower() : null)">SA</option>
+                            <option value="9" selected="@(item.Parcial3 == 9 ? true.ToString().ToLower() : null)">DE</option>
+                            <option value="10" selected="@(item.Parcial3 == 10 ? true.ToString().ToLower() : null)">AU</option>
+                        </select>
+                    </td>
+                    @{
+                        double promedio = ((double)(item.Parcial1 ?? 0)
+                                         + (double)(item.Parcial2 ?? 0)
+                                         + (double)(item.Parcial3 ?? 0)) / 3.0;
+                    }
+                    <td>@CalificacionLiteral(promedio)</td>
+
+                    @* Campos ocultos necesarios para el binding no se les olvide si no no sirve @GG *@
+                    <input type="hidden" name="calificaciones[@i].IdCalificacion" value="@item.IdCalificacion" />
+                    <input type="hidden" name="calificaciones[@i].IdEstudiante" value="@item.IdEstudiante" />
+                    <input type="hidden" name="calificaciones[@i].IdMateria" value="@item.IdMateria" />
+                    <input type="hidden" name="calificaciones[@i].IdGrupo" value="@item.IdGrupo" />
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Guardar Calificaciones</button>
+</form>
