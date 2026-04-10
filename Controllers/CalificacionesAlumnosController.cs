@@ -20,7 +20,7 @@ namespace SistemaCE.Controllers
         /// Prueba por si no sirve
         [HttpGet]
         [Authorize(Roles = "docente")]
-        public async Task<IActionResult> Index(int? grupoId)
+        public async Task<IActionResult> Index(int? grupoId, int? materiaId)
         {
             var idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
 
@@ -29,14 +29,20 @@ namespace SistemaCE.Controllers
                 .Select(d => d.IdDocenteNavigation!.Nombre + " " + d.IdDocenteNavigation.ApellidoPaterno + " " + d.IdDocenteNavigation.ApellidoMaterno)
                 .FirstOrDefaultAsync();
 
-            var gruposDocente = await (from d in _context.DocenteMateria
+            var gruposDocente = await (from d in _context.DocenteMateriaGrupos
                                        join g in _context.Grupos
                                            on d.IdGrupo equals g.IdGrupo
                                        where d.IdDocente == idUsuario
-                                       select g).ToListAsync();
+                                       select g).Distinct().ToListAsync();
+
+            var materias = await (from d in _context.DocenteMateriaGrupos
+                                  join m in _context.Materias
+                                  on d.IdMateria equals m.IdMateria
+                                  where d.IdDocente == idUsuario
+                                  select m).Distinct().ToListAsync();
 
             var division = await (from c in _context.Docentes
-                                  join d in _context.DocenteMateria
+                                  join d in _context.DocenteMateriaGrupos
                                       on c.IdDocente equals d.IdDocente
                                   join e in _context.Grupos
                                       on d.IdGrupo equals e.IdGrupo
@@ -46,21 +52,25 @@ namespace SistemaCE.Controllers
                                       on f.IdDivision equals g.IdDivision
                                   where c.IdDocente == idUsuario
                                   select g.Nombre)
-                     .FirstOrDefaultAsync();
+                                  .FirstOrDefaultAsync();
 
             ViewBag.Docente = docente;
             ViewBag.Grupos = gruposDocente;
             ViewBag.Division = division;
             ViewBag.GrupoSeleccionado = grupoId;
+            ViewBag.MateriaSeleccionada = materiaId;
+            ViewBag.Materias = materias;
 
+            /// Consulta para obtener estudiantes con sus calificaciones, incluyendo estudiantes sin calificaciones
             var estudiantesConCalificacionesQuery = from e in _context.Estudiantes
                                                     join p in _context.Personas on e.IdEstudiante equals p.IdPersona
                                                     join g in _context.Grupos on e.IdGrupo equals g.IdGrupo
-                                                    join dm in _context.DocenteMateria on g.IdGrupo equals dm.IdGrupo into dmJoin
+                                                    join dm in _context.DocenteMateriaGrupos on g.IdGrupo equals dm.IdGrupo into dmJoin
                                                     from dm in dmJoin.DefaultIfEmpty()
                                                     join c in _context.CalificacionAlumnos
-                                                        .Where(ca => ca.IdDocente == idUsuario)
-                                                        on new { e.IdEstudiante, dm.IdMateria } equals new { c.IdEstudiante, c.IdMateria } into cJoin
+                                                    .Where(ca => ca.IdDocente == idUsuario)
+                                                        on new { IdEstudiante = (int?)e.IdEstudiante, IdMateria = (int?)dm.IdMateria }
+                                                        equals new { IdEstudiante = c.IdEstudiante, IdMateria = c.IdMateria } into cJoin
                                                     from cal in cJoin.DefaultIfEmpty()
                                                     join d in _context.Docentes on dm.IdDocente equals d.IdDocente
                                                     join dp in _context.Personas on d.IdDocente equals dp.IdPersona
@@ -87,8 +97,15 @@ namespace SistemaCE.Controllers
                 estudiantesConCalificacionesQuery = estudiantesConCalificacionesQuery
                                                     .Where(c => c.IdGrupo == grupoId.Value);
             }
+            
+            if (materiaId.HasValue)
+            {
+                estudiantesConCalificacionesQuery = estudiantesConCalificacionesQuery
+                    .Where(c => c.IdMateria == materiaId.Value);
+            }
 
             var estudiantesConCalificaciones = await estudiantesConCalificacionesQuery.ToListAsync();
+
             return View(estudiantesConCalificaciones);
         }
 
@@ -256,7 +273,7 @@ namespace SistemaCE.Controllers
             /// Cosas que agregue jajaja No lo hizo ChatGpt @GG
             var grupos = _context.Grupos.ToList();
             var idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-            var docentematerias = _context.DocenteMateria
+            var docentematerias = _context.DocenteMateriaGrupos
                 .Where(m => m.IdDocente == idUsuario)
                 .Select(m => m.IdMateria)
                 .ToList();

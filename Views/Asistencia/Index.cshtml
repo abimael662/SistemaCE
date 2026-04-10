@@ -1,0 +1,79 @@
+﻿@model IEnumerable<SistemaCE.Models.Asistencium>
+
+<h1>Asistencia</h1>
+
+<form method="get" asp-action="Index">
+    <label for="grupoSeleccionado">Seleccionar Grupo:</label>
+    <select id="grupoSeleccionado" name="grupoId" class="form-select" onchange="this.form.submit()">
+        <option value="">-- Todos los grupos --</option>
+        @foreach (var grupo in ViewBag.Grupos)
+        {
+            <option value="@grupo.IdGrupo" selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? true.ToString().ToLower() : null)">@grupo.Grupo1</option>
+        }
+    </select>
+    <select id="materiaSeleccionado" name="materiaId" onchange="this.form.submit()">
+        <option value="">-- Todas las materias --</option>
+        @foreach (var materia in ViewBag.Materias)
+        {
+            <option value="@materia.IdMateria"
+                    selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
+                @materia.Nombre
+            </option>
+        }
+    </select>
+</form>
+
+<input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled />
+
+<p>Docente: @ViewBag.Docente</p>
+<p>División: @ViewBag.Division</p>
+
+<form asp-action="GuardarAsistencia" method="post">
+    <input type="hidden" name="idGrupo" value="@ViewBag.GrupoSeleccionado" />
+    <input type="hidden" name="idMateria" value="@ViewBag.MateriaSeleccionada" />
+    <input type="hidden" name="fecha" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+    <table>
+        <thead>
+            <tr>
+                <th>Alumno</th>
+                <th>Grupo</th>
+                <th>Estado</th>
+                <th>Observación</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                var item = Model.ElementAt(i);
+
+                <tr>
+                    <td>
+                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.Nombre ?? "")
+                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoPaterno ?? "")
+                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoMaterno ?? "")
+                    </td>
+
+                    <td>
+                        @item.IdSesionNavigation?.IdGrupoNavigation?.Grupo1
+                    </td>
+                    <td>
+                        <select name="asistencias[@i].IdEstado"
+                                asp-items="ViewBag.Estados">
+                            <option value="">Seleccione un estado</option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <input type="text" name="asistencias[@i].Observacion" value="@item.Observacion" />
+                    </td>
+
+                    <input type="hidden" name="asistencias[@i].IdAsistencia" value="@item.IdAsistencia" />
+                    <input type="hidden" name="asistencias[@i].IdEstudiante" value="@item.IdEstudiante" />
+                    <input type="hidden" name="asistencias[@i].IdSesion" value="@item.IdSesion" />
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit">Guardar</button>
+</form>

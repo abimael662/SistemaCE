@@ -27,7 +27,32 @@
             <option value="@grupo.IdGrupo" selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? true.ToString().ToLower() : null)">@grupo.Grupo1</option>
         }
     </select>
+    <label for="materiaSeleccionado">Seleccionar Materia:</label>
+    <select id="materiaSeleccionado" name="materiaId" onchange="this.form.submit()">
+        <option value="">-- Todas las materias --</option>
+        @foreach (var materia in ViewBag.Materias)
+        {
+            <option value="@materia.IdMateria"
+                    selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
+                @materia.Nombre
+            </option>
+        }
+    </select>
 </form>
+
+@* <form method="get" asp-action="Index">
+    <label for="materiaSeleccionado">Seleccionar Materia:</label>
+    <select id="materiaSeleccionado" name="materiaId" onchange="this.form.submit()">
+        <option value="">-- Todas las materias --</option>
+        @foreach (var materia in ViewBag.Materias)
+        {
+            <option value="@materia.IdMateria"
+                    selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
+                @materia.Nombre
+            </option>
+        }
+    </select>
+</form> *@
 
 <h3>Datos del profesor</h3>
 <p>Nombre: @ViewBag.Docente</p>

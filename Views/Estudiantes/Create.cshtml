@@ -14,7 +14,7 @@
 
         <!-- PERSONA -->
         <div>
-            <label asp-for="IdEstudiante" class="block font-medium"></label>
+            <label asp-for="IdEstudiante" class="block font-medium">Estudiante</label>
             <select asp-for="IdEstudiante"
                     asp-items="ViewBag.IdEstudiante"
                     class="w-full border px-3 py-2 rounded">
@@ -23,7 +23,7 @@
 
         <!-- GRUPO -->
         <div>
-            <label asp-for="IdGrupo" class="block font-medium"></label>
+            <label asp-for="IdGrupo" class="block font-medium">Grupo</label>
             <select asp-for="IdGrupo"
                     asp-items="ViewBag.IdGrupo"
                     class="w-full border px-3 py-2 rounded">
@@ -31,15 +31,15 @@
         </div>
 
         <!-- MATRICULA -->
-        <div>
+        @* <div>
             <label asp-for="Matricula"></label>
             <input asp-for="Matricula" class="w-full border px-3 py-2 rounded" />
             <span asp-validation-for="Matricula" class="text-red-500 text-sm"></span>
-        </div>
+        </div> *@
 
         <!-- FECHA -->
         <div>
-            <label asp-for="FechaIngreso"></label>
+            <label asp-for="FechaIngreso">Fecha Ingreso</label>
             <input asp-for="FechaIngreso" type="date"
                    class="w-full border px-3 py-2 rounded" />
             <span asp-validation-for="FechaIngreso" class="text-red-500 text-sm"></span>

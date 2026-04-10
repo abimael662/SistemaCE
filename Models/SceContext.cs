@@ -1,14 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace SistemaCE.Models;
 
 public partial class SceContext : DbContext
 {
-    public SceContext(){}
-
-    public SceContext(DbContextOptions<SceContext> options) : base(options){}
+    public SceContext(DbContextOptions<SceContext> options) : base (options) {}
 
     public virtual DbSet<Administrativo> Administrativos { get; set; }
+
+    public virtual DbSet<Asistencium> Asistencia { get; set; }
 
     public virtual DbSet<CalificacionAlumno> CalificacionAlumnos { get; set; }
 
@@ -22,9 +24,13 @@ public partial class SceContext : DbContext
 
     public virtual DbSet<Docente> Docentes { get; set; }
 
+    public virtual DbSet<DocenteMateriaGrupo> DocenteMateriaGrupos { get; set; }
+
     public virtual DbSet<Empleado> Empleados { get; set; }
 
     public virtual DbSet<Especialidad> Especialidads { get; set; }
+
+    public virtual DbSet<EstadoAsistencium> EstadoAsistencia { get; set; }
 
     public virtual DbSet<Estudiante> Estudiantes { get; set; }
 
@@ -40,15 +46,11 @@ public partial class SceContext : DbContext
 
     public virtual DbSet<PersonaUsuario> PersonaUsuarios { get; set; }
 
+    public virtual DbSet<SesionClase> SesionClases { get; set; }
+
     public virtual DbSet<TipoComunicacion> TipoComunicacions { get; set; }
 
     public virtual DbSet<Titulacion> Titulacions { get; set; }
-
-    public virtual DbSet<DocenteMateria> DocenteMateria { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Database=sce;Username=postgres;Password=root");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -83,17 +85,46 @@ public partial class SceContext : DbContext
                 .HasConstraintName("administrativo_numero_empleado_fkey");
         });
 
+        modelBuilder.Entity<Asistencium>(entity =>
+        {
+            entity.HasKey(e => e.IdAsistencia).HasName("asistencia_pkey");
+
+            entity.ToTable("asistencia");
+
+            entity.HasIndex(e => new { e.IdSesion, e.IdEstudiante }, "asistencia_id_sesion_id_estudiante_key").IsUnique();
+
+            entity.Property(e => e.IdAsistencia).HasColumnName("id_asistencia");
+            entity.Property(e => e.IdEstado).HasColumnName("id_estado");
+            entity.Property(e => e.IdEstudiante).HasColumnName("id_estudiante");
+            entity.Property(e => e.IdSesion).HasColumnName("id_sesion");
+            entity.Property(e => e.Observacion).HasColumnName("observacion");
+
+            entity.HasOne(d => d.IdEstadoNavigation).WithMany(p => p.Asistencia)
+                .HasForeignKey(d => d.IdEstado)
+                .HasConstraintName("asistencia_id_estado_fkey");
+
+            entity.HasOne(d => d.IdEstudianteNavigation).WithMany(p => p.Asistencia)
+                .HasForeignKey(d => d.IdEstudiante)
+                .HasConstraintName("asistencia_id_estudiante_fkey");
+
+            entity.HasOne(d => d.IdSesionNavigation).WithMany(p => p.Asistencia)
+                .HasForeignKey(d => d.IdSesion)
+                .HasConstraintName("asistencia_id_sesion_fkey");
+        });
+
         modelBuilder.Entity<CalificacionAlumno>(entity =>
         {
             entity.HasKey(e => e.IdCalificacion).HasName("calificacion_alumno_pkey");
 
             entity.ToTable("calificacion_alumno");
 
+            entity.HasIndex(e => new { e.IdEstudiante, e.IdMateria, e.IdGrupo }, "uq_estudiante_materia_grupo").IsUnique();
+
             entity.Property(e => e.IdCalificacion).HasColumnName("id_calificacion");
             entity.Property(e => e.IdDocente).HasColumnName("id_docente");
             entity.Property(e => e.IdEstudiante).HasColumnName("id_estudiante");
-            entity.Property(e => e.IdMateria).HasColumnName("id_materia");
             entity.Property(e => e.IdGrupo).HasColumnName("id_grupo");
+            entity.Property(e => e.IdMateria).HasColumnName("id_materia");
             entity.Property(e => e.Parcial1)
                 .HasPrecision(5, 2)
                 .HasColumnName("parcial_1");
@@ -115,14 +146,14 @@ public partial class SceContext : DbContext
                 .HasForeignKey(d => d.IdEstudiante)
                 .HasConstraintName("calificacion_alumno_id_estudiante_fkey");
 
+            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.CalificacionAlumnos)
+                .HasForeignKey(d => d.IdGrupo)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("calificacion_alumno_id_grupo_fkey");
+
             entity.HasOne(d => d.IdMateriaNavigation).WithMany(p => p.CalificacionAlumnos)
                 .HasForeignKey(d => d.IdMateria)
                 .HasConstraintName("calificacion_alumno_id_materia_fkey");
-            
-            //agregado por mi
-            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.CalificacionAlumnos)
-                .HasForeignKey(d => d.IdGrupo)
-                .HasConstraintName("calificacion_alumno_id_grupo_fkey");
         });
 
         modelBuilder.Entity<Carrera>(entity =>
@@ -253,6 +284,35 @@ public partial class SceContext : DbContext
                     });
         });
 
+        modelBuilder.Entity<DocenteMateriaGrupo>(entity =>
+        {
+            entity.HasKey(e => e.IdDocenteMateriaGrupo).HasName("docente_materia_grupo_pkey");
+
+            entity.ToTable("docente_materia_grupo");
+
+            entity.HasIndex(e => new { e.IdDocente, e.IdMateria, e.IdGrupo }, "docente_materia_grupo_id_docente_id_materia_id_grupo_key").IsUnique();
+
+            entity.Property(e => e.IdDocenteMateriaGrupo).HasColumnName("id_docente_materia_grupo");
+            entity.Property(e => e.IdDocente).HasColumnName("id_docente");
+            entity.Property(e => e.IdGrupo).HasColumnName("id_grupo");
+            entity.Property(e => e.IdMateria).HasColumnName("id_materia");
+
+            entity.HasOne(d => d.IdDocenteNavigation).WithMany(p => p.DocenteMateriaGrupos)
+                .HasForeignKey(d => d.IdDocente)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("docente_materia_grupo_id_docente_fkey");
+
+            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.DocenteMateriaGrupos)
+                .HasForeignKey(d => d.IdGrupo)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("docente_materia_grupo_id_grupo_fkey");
+
+            entity.HasOne(d => d.IdMateriaNavigation).WithMany(p => p.DocenteMateriaGrupos)
+                .HasForeignKey(d => d.IdMateria)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("docente_materia_grupo_id_materia_fkey");
+        });
+
         modelBuilder.Entity<Empleado>(entity =>
         {
             entity.HasKey(e => e.IdEmpleado).HasName("empleado_pkey");
@@ -273,6 +333,18 @@ public partial class SceContext : DbContext
 
             entity.Property(e => e.IdEspecialidad).HasColumnName("id_especialidad");
             entity.Property(e => e.Especialidad1).HasColumnName("especialidad");
+        });
+
+        modelBuilder.Entity<EstadoAsistencium>(entity =>
+        {
+            entity.HasKey(e => e.IdEstado).HasName("estado_asistencia_pkey");
+
+            entity.ToTable("estado_asistencia");
+
+            entity.Property(e => e.IdEstado).HasColumnName("id_estado");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(20)
+                .HasColumnName("nombre");
         });
 
         modelBuilder.Entity<Estudiante>(entity =>
@@ -409,6 +481,33 @@ public partial class SceContext : DbContext
                 .HasConstraintName("persona_usuario_id_persona_fkey");
         });
 
+        modelBuilder.Entity<SesionClase>(entity =>
+        {
+            entity.HasKey(e => e.IdSesion).HasName("sesion_clase_pkey");
+
+            entity.ToTable("sesion_clase");
+
+            entity.Property(e => e.IdSesion).HasColumnName("id_sesion");
+            entity.Property(e => e.Fecha).HasColumnName("fecha");
+            entity.Property(e => e.HoraFin).HasColumnName("hora_fin");
+            entity.Property(e => e.HoraInicio).HasColumnName("hora_inicio");
+            entity.Property(e => e.IdDocente).HasColumnName("id_docente");
+            entity.Property(e => e.IdGrupo).HasColumnName("id_grupo");
+            entity.Property(e => e.IdMateria).HasColumnName("id_materia");
+
+            entity.HasOne(d => d.IdDocenteNavigation).WithMany(p => p.SesionClases)
+                .HasForeignKey(d => d.IdDocente)
+                .HasConstraintName("sesion_clase_id_docente_fkey");
+
+            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.SesionClases)
+                .HasForeignKey(d => d.IdGrupo)
+                .HasConstraintName("sesion_clase_id_grupo_fkey");
+
+            entity.HasOne(d => d.IdMateriaNavigation).WithMany(p => p.SesionClases)
+                .HasForeignKey(d => d.IdMateria)
+                .HasConstraintName("sesion_clase_id_materia_fkey");
+        });
+
         modelBuilder.Entity<TipoComunicacion>(entity =>
         {
             entity.HasKey(e => e.IdTipoComunicacion).HasName("tipo_comunicacion_pkey");
@@ -442,33 +541,6 @@ public partial class SceContext : DbContext
             entity.HasOne(d => d.IdNivelNavigation).WithMany(p => p.Titulacions)
                 .HasForeignKey(d => d.IdNivel)
                 .HasConstraintName("titulacion_id_nivel_fkey");
-        });
-
-
-        //Tabla nueva agregada por mi para relacionar docentes, materias y grupos @GG
-        modelBuilder.Entity<DocenteMateria>(entity =>
-        {
-            entity.HasKey(e => e.IdDocenteMateria).HasName("docente_materia_pkey");
-
-            entity.ToTable("docente_materia_grupo");
-
-            entity.Property(e => e.IdDocenteMateria).HasColumnName("id_docente_materia_grupo");
-            entity.Property(e => e.IdDocente).HasColumnName("id_docente");
-            entity.Property(e => e.IdMateria).HasColumnName("id_materia");
-            entity.Property(e => e.IdGrupo).HasColumnName("id_grupo");
-
-            entity.HasOne(d => d.IdDocenteNavigation).WithMany(p => p.DocenteMaterias)
-               .HasForeignKey(d => d.IdDocente)
-               .HasConstraintName("docente_materia_grupo_id_docente_fkey");
-
-            entity.HasOne(d => d.IdMateriaNavigation).WithMany(p => p.DocenteMaterias)
-                .HasForeignKey(d => d.IdMateria)
-                .HasConstraintName("docente_materia_grupo_id_materia_fkey");
-
-            //agregado por mi
-            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.DocenteMaterias)
-                .HasForeignKey(d => d.IdGrupo)
-                .HasConstraintName("docente_materia_grupo_id_grupo_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);
