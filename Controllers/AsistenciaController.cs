@@ -59,6 +59,16 @@ namespace SistemaCE.Controllers
                                   select g.Nombre)
                     .FirstOrDefaultAsync();
 
+            if (!grupoId.HasValue && gruposDocente.Any())
+            {
+                grupoId = gruposDocente.First().IdGrupo;
+            }
+
+            if (!materiaId.HasValue && materias.Any())
+            {
+                materiaId = materias.First().IdMateria;
+            }
+
             /// Pasar los datos obtenidos a la vista utilizando ViewBag @GG
             ViewBag.Docente = docente;
             ViewBag.Grupos = gruposDocente;

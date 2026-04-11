@@ -32,6 +32,8 @@ namespace SistemaCE.Controllers
                     .Include(p => p.Administrativo)
                     .FirstOrDefault(p => p.IdPersona == idUsuario);
 
+
+
                 return View(datos);
             }
             catch

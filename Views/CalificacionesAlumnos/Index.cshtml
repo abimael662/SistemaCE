@@ -4,18 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-@functions {
-    string CalificacionLiteral(double? valor)
-    {
-        if (valor == null || valor == 0) return "SE";
-        if (valor >= 0 && valor < 7) return "NA";
-        if (valor >= 7 && valor < 8) return "SA";
-        if (valor >= 8 && valor < 9) return "DE";
-        if (valor >= 9) return "AU";
-        return "SE";
-    }
-}
-
 <h1>Index</h1>
 
 <form method="get" asp-action="Index">
@@ -39,20 +27,6 @@
         }
     </select>
 </form>
-
-@* <form method="get" asp-action="Index">
-    <label for="materiaSeleccionado">Seleccionar Materia:</label>
-    <select id="materiaSeleccionado" name="materiaId" onchange="this.form.submit()">
-        <option value="">-- Todas las materias --</option>
-        @foreach (var materia in ViewBag.Materias)
-        {
-            <option value="@materia.IdMateria"
-                    selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
-                @materia.Nombre
-            </option>
-        }
-    </select>
-</form> *@
 
 <h3>Datos del profesor</h3>
 <p>Nombre: @ViewBag.Docente</p>
@@ -92,37 +66,34 @@
 
                     <td>
                         <select name="calificaciones[@i].Parcial1" class="form-select">
-                            <option value="0" selected="@(item.Parcial1 == 0 ? true.ToString().ToLower() : null)">SE</option>
-                            <option value="7" selected="@(item.Parcial1 == 7 ? true.ToString().ToLower() : null)">NA</option>
-                            <option value="8" selected="@(item.Parcial1 == 8 ? true.ToString().ToLower() : null)">SA</option>
-                            <option value="9" selected="@(item.Parcial1 == 9 ? true.ToString().ToLower() : null)">DE</option>
-                            <option value="10" selected="@(item.Parcial1 == 10 ? true.ToString().ToLower() : null)">AU</option>
+                            @foreach (var tipo in Enum.GetValues(typeof(TipoCalificacion)))
+                            {
+                                var valor = (int)tipo;
+                                <option value="@valor" selected="@(item.Parcial1 == valor ? "selected" : null)">@tipo</option>
+                            }
                         </select>
                     </td>
                     <td>
                         <select name="calificaciones[@i].Parcial2" class="form-select">
-                            <option value="0" selected="@(item.Parcial2 == 0 ? true.ToString().ToLower() : null)">SE</option>
-                            <option value="7" selected="@(item.Parcial2 == 7 ? true.ToString().ToLower() : null)">NA</option>
-                            <option value="8" selected="@(item.Parcial2 == 8 ? true.ToString().ToLower() : null)">SA</option>
-                            <option value="9" selected="@(item.Parcial2 == 9 ? true.ToString().ToLower() : null)">DE</option>
-                            <option value="10" selected="@(item.Parcial2 == 10 ? true.ToString().ToLower() : null)">AU</option>
+                            @foreach (var tipo in Enum.GetValues(typeof(TipoCalificacion)))
+                            {
+                                var valor = (int)tipo;
+                                <option value="@valor" selected="@(item.Parcial2 == valor ? "selected" : null)">@tipo</option>
+                            }
                         </select>
                     </td>
                     <td>
                         <select name="calificaciones[@i].Parcial3" class="form-select">
-                            <option value="0" selected="@(item.Parcial3 == 0 ? true.ToString().ToLower() : null)">SE</option>
-                            <option value="7" selected="@(item.Parcial3 == 7 ? true.ToString().ToLower() : null)">NA</option>
-                            <option value="8" selected="@(item.Parcial3 == 8 ? true.ToString().ToLower() : null)">SA</option>
-                            <option value="9" selected="@(item.Parcial3 == 9 ? true.ToString().ToLower() : null)">DE</option>
-                            <option value="10" selected="@(item.Parcial3 == 10 ? true.ToString().ToLower() : null)">AU</option>
+                            @foreach (var tipo in Enum.GetValues(typeof(TipoCalificacion)))
+                            {
+                                var valor = (int)tipo;
+                                <option value="@valor" selected="@(item.Parcial3 == valor ? "selected" : null)">@tipo</option>
+                            }
                         </select>
                     </td>
-                    @{
-                        double promedio = ((double)(item.Parcial1 ?? 0)
-                                         + (double)(item.Parcial2 ?? 0)
-                                         + (double)(item.Parcial3 ?? 0)) / 3.0;
-                    }
-                    <td>@CalificacionLiteral(promedio)</td>
+                    <td>
+                        @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.PromedioFinal)
+                    </td>
 
                     @* Campos ocultos necesarios para el binding no se les olvide si no no sirve @GG *@
                     <input type="hidden" name="calificaciones[@i].IdCalificacion" value="@item.IdCalificacion" />

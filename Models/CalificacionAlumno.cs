@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SistemaCE.Models;
 
@@ -30,4 +31,13 @@ public partial class CalificacionAlumno
     public virtual Grupo IdGrupoNavigation { get; set; } = null!;
 
     public virtual Materia? IdMateriaNavigation { get; set; }
+}
+
+public enum TipoCalificacion
+{
+    SE = 0,
+    NA = 7,
+    SA = 8,
+    DE = 9,
+    AU = 10
 }

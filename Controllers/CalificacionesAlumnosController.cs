@@ -54,6 +54,16 @@ namespace SistemaCE.Controllers
                                   select g.Nombre)
                                   .FirstOrDefaultAsync();
 
+            if (!grupoId.HasValue && gruposDocente.Any())
+            {
+                grupoId = gruposDocente.First().IdGrupo;
+            }
+
+            if (!materiaId.HasValue && materias.Any())
+            {
+                materiaId = materias.First().IdMateria;
+            }
+
             ViewBag.Docente = docente;
             ViewBag.Grupos = gruposDocente;
             ViewBag.Division = division;
@@ -109,79 +119,6 @@ namespace SistemaCE.Controllers
             return View(estudiantesConCalificaciones);
         }
 
-        //[Authorize(Roles = "docente")]
-        //public async Task<IActionResult> Index()
-        //{
-
-        //    var idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-
-        //    var docentematerias = await _context.DocenteMateria
-        //        .Where(m => m.IdDocente == idUsuario)
-        //        .Select(m => m.IdMateria)
-        //        .ToListAsync();
-
-        //    var docente = await _context.Docentes
-        //        .Where(d => d.IdDocente == idUsuario)
-        //        .Select(d => d.IdDocenteNavigation!.Nombre + " " + d.IdDocenteNavigation.ApellidoPaterno + " " + d.IdDocenteNavigation.ApellidoMaterno)
-        //        .FirstOrDefaultAsync();
-
-        //    var gruposDocente = await (from d in _context.DocenteMateria
-        //                               join g in _context.Grupos
-        //                                   on d.IdGrupo equals g.IdGrupo
-        //                               where d.IdDocente == idUsuario
-        //                               select g.Grupo1)
-        //                  .ToListAsync();
-
-        //    var division = await (from c in _context.Docentes
-        //                          join d in _context.DocenteMateria
-        //                              on c.IdDocente equals d.IdDocente
-        //                          join e in _context.Grupos
-        //                              on d.IdGrupo equals e.IdGrupo
-        //                          join f in _context.Carreras
-        //                              on e.IdCarrera equals f.IdCarrera
-        //                          join g in _context.Divisions
-        //                              on f.IdDivision equals g.IdDivision
-        //                          where c.IdDocente == idUsuario
-        //                          select g.Nombre)
-        //             .FirstOrDefaultAsync();
-
-        //    var estudiantesConCalificaciones = await (from e in _context.Estudiantes
-        //                                              join p in _context.Personas on e.IdEstudiante equals p.IdPersona
-        //                                              join g in _context.Grupos on e.IdGrupo equals g.IdGrupo
-        //                                              join dm in _context.DocenteMateria on g.IdGrupo equals dm.IdGrupo
-        //                                                  into dmJoin
-        //                                              from dm in dmJoin.DefaultIfEmpty()
-        //                                              join c in _context.CalificacionAlumnos
-        //                                                  .Where(ca => ca.IdDocente == idUsuario)
-        //                                                  on new { e.IdEstudiante, dm.IdMateria } equals new { c.IdEstudiante, c.IdMateria } into cJoin
-        //                                              from cal in cJoin.DefaultIfEmpty()
-        //                                              join d in _context.Docentes on dm.IdDocente equals d.IdDocente
-        //                                              join dp in _context.Personas on d.IdDocente equals dp.IdPersona
-        //                                              where dm.IdDocente == idUsuario
-        //                                              select new CalificacionAlumno
-        //                                              {
-        //                                                  IdCalificacion = cal != null ? cal.IdCalificacion : 0,
-        //                                                  IdEstudiante = e.IdEstudiante,
-        //                                                  IdEstudianteNavigation = new Estudiante { IdEstudianteNavigation = p },
-        //                                                  IdMateria = dm.IdMateria,
-        //                                                  IdMateriaNavigation = dm.IdMateriaNavigation,
-        //                                                  IdGrupo = g.IdGrupo,
-        //                                                  IdGrupoNavigation = g,
-        //                                                  Parcial1 = cal != null ? cal.Parcial1 : null,
-        //                                                  Parcial2 = cal != null ? cal.Parcial2 : null,
-        //                                                  Parcial3 = cal != null ? cal.Parcial3 : null,
-        //                                                  PromedioFinal = cal != null ? cal.PromedioFinal : null,
-        //                                                  IdDocente = idUsuario,
-        //                                                  IdDocenteNavigation = new Docente { IdDocenteNavigation = dp },
-        //                                              }).ToListAsync();
-        //    ViewBag.Docente = docente;
-        //    ViewBag.Division = division;
-        //    ViewBag.Grupos = gruposDocente;
-
-
-        //    return View(estudiantesConCalificaciones);
-        //}
-
         [HttpPost]
         [Authorize(Roles = "docente")]
         [ValidateAntiForgeryToken]
@@ -194,7 +131,12 @@ namespace SistemaCE.Controllers
                 cal.Parcial1 ??= 0;
                 cal.Parcial2 ??= 0;
                 cal.Parcial3 ??= 0;
-                cal.PromedioFinal ??= 0;
+
+                decimal p1 = cal.Parcial1 ?? 0;
+                decimal p2 = cal.Parcial2 ?? 0;
+                decimal p3 = cal.Parcial3 ?? 0;
+
+                cal.PromedioFinal = Math.Round((p1 + p2 + p3) / 3m, 2);
 
                 var existente = await _context.CalificacionAlumnos
                     .FirstOrDefaultAsync(ca => ca.IdEstudiante == cal.IdEstudiante
@@ -240,8 +182,9 @@ namespace SistemaCE.Controllers
             return View(await _context.CalificacionAlumnos
                 .Where(c => c.IdEstudiante == idUsuario)
                 .Include(c => c.IdDocenteNavigation)
-        .Include(c => c.IdEstudianteNavigation)
-        .Include(c => c.IdMateriaNavigation)
+                    .ThenInclude(c => c.IdDocenteNavigation)
+                .Include(c => c.IdEstudianteNavigation)
+                .Include(c => c.IdMateriaNavigation)
                 .ToListAsync());
         }
 

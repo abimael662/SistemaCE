@@ -75,6 +75,12 @@ namespace SistemaCE.Controllers
 
             ViewData["IdEstudiante"] = new SelectList(personasDisponibles, "IdPersona", "Nombre");
             ViewData["IdGrupo"] = new SelectList(_context.Grupos, "IdGrupo", "Grupo1");
+            ViewData["Estatus"] = new SelectList(
+                Enum.GetValues(typeof(EstatusEstudiante))
+                .Cast<EstatusEstudiante>()
+                .Select(e => new
+                {Id = (int)e,Nombre = e.ToString()
+                }),"Id","Nombre");
 
             return View();
         }
