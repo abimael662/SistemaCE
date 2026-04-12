@@ -1,15 +1,14 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.EntityFrameworkCore;
 using SistemaCE.Models;
-using System.Diagnostics;
 using System.Security.Claims;
-using System.Security.Principal;
 
 namespace SistemaCE.Controllers
 {
-    [Authorize]
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly SceContext _context;
@@ -19,20 +18,123 @@ namespace SistemaCE.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        private async Task GuardarSesionUsuario(Persona persona)
+        {
+
+            var identity = new ClaimsIdentity(
+           CookieAuthenticationDefaults.AuthenticationScheme,
+           ClaimTypes.Name,
+           ClaimTypes.Role
+           );
+
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, persona.IdPersona.ToString()));
+            identity.AddClaim(new Claim(ClaimTypes.Name, persona.Nombre!));
+            identity.AddClaim(new Claim("ApellidoPaterno", persona.ApellidoPaterno!));
+            identity.AddClaim(new Claim("ApellidoMaterno", persona.ApellidoMaterno!));
+
+            if (_context.Docentes.Any(d => d.IdDocente == persona.IdPersona))
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, "docente"));
+            }
+            else if (_context.Estudiantes.Any(e => e.IdEstudiante == persona.IdPersona))
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, "estudiante"));
+            }
+            else
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, "administrativo"));
+            }
+
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
+                new AuthenticationProperties { ExpiresUtc = DateTime.UtcNow.AddDays(1), IsPersistent = true });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Login(string usuario, string password)
         {
             try
             {
-                int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+                if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(password))
+                {
+                    ViewBag.Error = "Correo y contraseña son requeridos";
+                    return View("Index");
+                }
 
-                var datos = _context.Personas
-                    .Include(p => p.Estudiante)
-                        .ThenInclude(e => e.IdGrupoNavigation)
-                    .Include(p => p.Docente)
-                    .Include(p => p.Administrativo)
-                    .FirstOrDefault(p => p.IdPersona == idUsuario);
+                var persona = _context.Personas
+                    .Where(p => p.PersonaUsuario != null &&
+                    p.PersonaUsuario.Usuario == usuario &&
+                                p.PersonaUsuario.Password == password)
+                    .FirstOrDefault();
 
-                return View(datos);
+                if (persona != null)
+                {
+                    await GuardarSesionUsuario(persona);
+                    return RedirectToAction("Main", "Home");
+                }
+
+                ViewBag.Error = "Credenciales incorrectas";
+                return View("Index");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [AllowAnonymous]
+        // GET: LoginController
+        public ActionResult Index()
+        {
+            return View();
+        }
+        [Authorize]
+public IActionResult Main()
+{
+    var rol = User.FindFirst(ClaimTypes.Role)?.Value;
+
+    if (rol == "docente")
+    {
+        return View("MainDocente");
+    }
+    else if (rol == "estudiante")
+    {
+        return View("MainAlumno");
+    }
+    else
+    {
+        return View("MainAdmin");
+    }
+}
+
+        // GET: LoginController/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
+
+        // GET: LoginController/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: LoginController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
@@ -40,16 +142,46 @@ namespace SistemaCE.Controllers
             }
         }
 
-        public IActionResult Privacy()
+        // GET: LoginController/Edit/5
+        public ActionResult Edit(int id)
         {
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        // POST: LoginController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, IFormCollection collection)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: LoginController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
+
+        // POST: LoginController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
         }
     }
 }
-
