@@ -220,7 +220,7 @@ namespace SistemaCE.Controllers
         }
 
         [Authorize(Roles = "estudiante")]
-        public async Task<IActionResult> Cuatrimestre()
+        public async Task<IActionResult> EvaluacionesActuales()
         {
             int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
 
@@ -444,20 +444,21 @@ namespace SistemaCE.Controllers
         {
             return _context.Divisions.Any(e => e.IdDivision == id);
         }
-        [Authorize(Roles = "estudiante")]
-        public IActionResult EvaluacionesActuales()
-        {
-            int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
 
-            var data = _context.CalificacionAlumnos
-                .Include(c => c.IdMateriaNavigation)
-                .Include(c => c.IdDocenteNavigation)
-                .Include(c=> c.IdGrupoNavigation)
-                .Where(c => c.IdEstudiante == idUsuario)
-                .ToList();
+        //[Authorize(Roles = "estudiante")]
+        //public IActionResult EvaluacionesActuales()
+        //{
+        //    int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
 
-            return View(data);
-        }
+        //    var data = _context.CalificacionAlumnos
+        //        .Include(c => c.IdMateriaNavigation)
+        //        .Include(c => c.IdDocenteNavigation)
+        //        .Include(c=> c.IdGrupoNavigation)
+        //        .Where(c => c.IdEstudiante == idUsuario)
+        //        .ToList();
+
+        //    return View(data);
+        //}
     }
 
 }

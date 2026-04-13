@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SistemaCE.Models;
 using System.Security.Claims;
 
@@ -96,24 +97,40 @@ namespace SistemaCE.Controllers
         {
             return View();
         }
-        [Authorize]
-public IActionResult Main()
-{
-    var rol = User.FindFirst(ClaimTypes.Role)?.Value;
 
-    if (rol == "docente")
-    {
-        return View("MainDocente");
-    }
-    else if (rol == "estudiante")
-    {
-        return View("MainAlumno");
-    }
-    else
-    {
-        return View("MainAdmin");
-    }
-}
+        [Authorize]
+        public IActionResult Main()
+        {
+            var rol = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (rol == "docente")
+            {
+                return View("MainDocente");
+            }
+            else if (rol == "estudiante")
+            {
+                return RedirectToAction("MainAlumno");
+                //return View("MainAlumno");
+            }
+            else
+            {
+                return View("MainAdmin");
+            }
+        }
+
+        [Authorize]
+        public IActionResult MainAlumno()
+        {
+            int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+
+            var datos = _context.Personas
+                .Include(p => p.Estudiante)
+                    .ThenInclude(e => e.IdGrupoNavigation)
+                    .ThenInclude(j => j.IdGrupoBaseNavigation)
+                .FirstOrDefault(p => p.IdPersona == idUsuario);
+
+            return View(datos);
+        }
 
         // GET: LoginController/Details/5
         public ActionResult Details(int id)

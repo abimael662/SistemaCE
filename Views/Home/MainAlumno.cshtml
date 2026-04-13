@@ -1,4 +1,5 @@
-﻿
+﻿@using SistemaCE.Helpers
+@model SistemaCE.Models.Persona
 @{
     ViewData["Title"] = "MainAlumno";
     Layout = "_Layout";
@@ -7,7 +8,7 @@
 
     <!-- SALUDO -->
     <p class="text-3xl font-bold">
-        ¡Hola! @User.Identity.Name
+        ¡Hola! @SessionHelper.GetName(User)
     </p>
 
     <!-- BLOQUE PRINCIPAL -->
@@ -18,9 +19,20 @@
 
         <!-- DATOS -->
         <div class="space-y-2 text-lg">
-            <p><span class="font-semibold">Nombre:</span> @User.Identity.Name</p>
-            <p><span class="font-semibold">Apellido Paterno:</span> @User.FindFirst("ApellidoPaterno")?.Value</p>
-            <p><span class="font-semibold">Apellido Materno:</span> @User.FindFirst("ApellidoMaterno")?.Value</p>
+            <p>
+                <span class="font-semibold">Nombre:</span>
+                @SessionHelper.GetName(User)
+            </p>
+
+            <p>
+                <span class="font-semibold">Apellido Paterno:</span>
+                @SessionHelper.GetValue(User, "ApellidoPaterno")
+            </p>
+
+            <p>
+                <span class="font-semibold">Apellido Materno:</span>
+                @SessionHelper.GetValue(User, "ApellidoMaterno")
+            </p>
         </div>
 
     </div>
@@ -28,13 +40,13 @@
     <!-- GRUPO -->
     <div class="text-center">
         <p class="text-xl font-semibold">Grupo</p>
-        <p class="text-lg text-blue-600">8IDS3</p>
+        <p class="text-lg text-blue-600">@Model?.Estudiante?.IdGrupoNavigation?.IdGrupoBaseNavigation?.Nombre</p>
     </div>
 
     <!-- ESTATUS -->
     <div class="text-center">
         <p class="text-xl font-semibold">Estatus</p>
-        <p class="text-lg text-green-600">Activo</p>
+        <p class="text-lg text-green-600">@Model?.Estudiante?.Estatus</p>
     </div>
 
 </div>

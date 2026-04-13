@@ -32,11 +32,13 @@
                     @item.IdDocenteNavigation?.IdDocenteNavigation?.Nombre
                 </td>
 
-                <td class="p-2">@item.Parcial1</td>
-                <td class="p-2">@item.Parcial2</td>
-                <td class="p-2">@item.Parcial3</td>
-                <td class="p-2 font-bold">@item.PromedioFinal</td>
-                <td class="p-2 font-bold">@item.IdGrupoNavigation?.Grupo1</td>
+                <td class="p-2">@SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.Parcial1)</td>
+                <td class="p-2">@SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.Parcial2)</td>
+                <td class="p-2">@SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.Parcial3)</td>
+                <td class="p-2 font-bold">@SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.PromedioFinal)</td>
+
+                @* <td class="p-2 font-bold">@item.IdGrupoNavigation?.Grupo1</td> *@
+                <td class="p-2 font-bold">@item.IdGrupoNavigation?.IdGrupoBaseNavigation?.Nombre</td>
             </tr>
         }
     </tbody>
