@@ -2,17 +2,18 @@
 @using SistemaCE.Helpers
 
 @{
-    ViewData["Title"] = "Evaluaciones Actuales";
+    ViewData["Title"] = "Historial de Evaluaciones";
+    var grupos = ViewBag.Grupos;
+    var grupoSeleccionado = ViewBag.GrupoSeleccionado;
     var alumno = ViewBag.Alumno;
 }
 
 <div class="p-6 space-y-6">
 
+
     <div class="text-center">
-        <h1 class="text-3xl font-bold text-gray-800">Evaluaciones Actuales</h1>
+        <h1 class="text-3xl font-bold text-gray-800">Historial de Evaluaciones</h1>
     </div>
-
-
     <div class="bg-white shadow rounded-lg p-6 border">
         <h2 class="text-xl font-semibold mb-4 text-gray-700">Datos del Estudiante</h2>
 
@@ -52,9 +53,30 @@
         </div>
     </div>
 
+    <div class="bg-white p-4 rounded shadow border">
+
+        <h2 class="text-lg font-semibold mb-3 text-gray-700">Periodo cursado</h2>
+
+        <div class="flex flex-wrap gap-2">
+
+            @foreach (var g in grupos)
+            {
+                var activo = g.IdGrupo == grupoSeleccionado;
+
+                <a href="@Url.Action("HistorialCalificaciones", new { grupoId = g.IdGrupo })"
+                   class="px-4 py-2 rounded-lg border text-sm font-semibold
+                       @(activo ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200")">
+                    @g.Nombre
+                </a>
+            }
+
+        </div>
+    </div>
+
+ 
     <div class="bg-white shadow rounded-lg p-6 border">
 
-        <h2 class="text-xl font-semibold mb-4 text-gray-700">Evaluaciones</h2>
+        <h2 class="text-xl font-semibold mb-4 text-gray-700">Calificaciones</h2>
 
         <div class="overflow-x-auto">
             <table class="min-w-full border border-gray-300 text-center">
@@ -62,7 +84,7 @@
 
                 <thead class="bg-gray-200 text-gray-700">
                     <tr>
-                        <th class="p-2 border">Asignatura</th>
+                        <th class="p-2 border">Materia</th>
                         <th class="p-2 border">Docente</th>
                         <th class="p-2 border">Eval. 1</th>
                         <th class="p-2 border">Eval. 2</th>
@@ -71,17 +93,19 @@
                     </tr>
                 </thead>
 
-                <!-- BODY -->
                 <tbody>
 
                     @if (Model != null && Model.Any())
                     {
                         foreach (var item in Model)
                         {
-                            var literal = CalificacionHelper.ObtenerLiteral(item.PromedioFinal);
+                            var l1 = CalificacionHelper.ObtenerLiteral(item.Parcial1);
+                            var l2 = CalificacionHelper.ObtenerLiteral(item.Parcial2);
+                            var l3 = CalificacionHelper.ObtenerLiteral(item.Parcial3);
+                            var lf = CalificacionHelper.ObtenerLiteral(item.PromedioFinal);
 
 
-                            string colorClase = literal switch
+                            string GetColor(string lit) => lit switch
                             {
                                 "NA" => "text-red-600 font-bold",
                                 "SA" => "text-yellow-600 font-bold",
@@ -91,6 +115,8 @@
                             };
 
                             <tr class="border-t hover:bg-gray-50">
+
+
                                 <td class="p-2 border">
                                     @item.IdMateriaNavigation?.Nombre
                                 </td>
@@ -100,21 +126,23 @@
                                     @item.IdDocenteNavigation?.IdDocenteNavigation?.ApellidoPaterno
                                 </td>
 
-                                <td class="p-2 border">
-                                    @CalificacionHelper.ObtenerLiteral(item.Parcial1)
+
+                                <td class="p-2 border @GetColor(l1)">
+                                    @l1
                                 </td>
 
-                                <td class="p-2 border">
-                                    @CalificacionHelper.ObtenerLiteral(item.Parcial2)
+                                <td class="p-2 border @GetColor(l2)">
+                                    @l2
                                 </td>
 
-                                <td class="p-2 border">
-                                    @CalificacionHelper.ObtenerLiteral(item.Parcial3)
+                                <td class="p-2 border @GetColor(l3)">
+                                    @l3
                                 </td>
 
-                                <td class="p-2 border @colorClase">
-                                    @literal
+                                <td class="p-2 border @GetColor(lf)">
+                                    @lf
                                 </td>
+
                             </tr>
                         }
                     }
@@ -122,7 +150,7 @@
                     {
                         <tr>
                             <td colspan="6" class="p-4 text-gray-500">
-                                No hay calificaciones registradas.
+                                No hay calificaciones en este periodo.
                             </td>
                         </tr>
                     }

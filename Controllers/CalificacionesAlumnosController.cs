@@ -178,11 +178,28 @@ namespace SistemaCE.Controllers
         }
 
         [Authorize(Roles = "estudiante")]
-        public async Task<IActionResult> General(int? grupoId)
+        public async Task<IActionResult> HistorialCalificaciones(int? grupoId)
         {
             // Obtener ID del docente logueado
             //Convertimos a entero el idUsuario
             int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            var alumno = await _context.Estudiantes
+                .Where(e => e.IdEstudiante == idUsuario)
+                .Include(e => e.IdEstudianteNavigation) // persona
+                .Include(e => e.IdGrupoNavigation)
+                    .ThenInclude(g => g.IdGrupoBaseNavigation)
+                .Select(e => new
+                {
+                    NombreCompleto = e.IdEstudianteNavigation.Nombre + " " +
+                                     e.IdEstudianteNavigation.ApellidoPaterno + " " +
+                                     e.IdEstudianteNavigation.ApellidoMaterno,
+
+                    Grupo = e.IdGrupoNavigation.IdGrupoBaseNavigation.Nombre,
+                    Matricula = e.Matricula,
+                    Estatus = e.Estatus
+                })
+                .FirstOrDefaultAsync();
+
 
             var grupos = await _context.CalificacionAlumnos
                 .Where(c => c.IdEstudiante == idUsuario)
@@ -201,6 +218,7 @@ namespace SistemaCE.Controllers
 
             ViewBag.Grupos = grupos;
             ViewBag.GrupoSeleccionado = grupoId;
+            ViewBag.Alumno = alumno;
 
 
             var query = _context.CalificacionAlumnos
@@ -218,29 +236,40 @@ namespace SistemaCE.Controllers
 
             return View(resultado);
         }
-
         [Authorize(Roles = "estudiante")]
         public async Task<IActionResult> EvaluacionesActuales()
         {
             int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            var alumno = await _context.Estudiantes
+                .Where(e => e.IdEstudiante == idUsuario)
+                .Include(e => e.IdEstudianteNavigation) // persona
+                .Include(e => e.IdGrupoNavigation)
+                    .ThenInclude(g => g.IdGrupoBaseNavigation)
+                .Select(e => new
+                {
+                    NombreCompleto = e.IdEstudianteNavigation.Nombre + " " +
+                                     e.IdEstudianteNavigation.ApellidoPaterno + " " +
+                                     e.IdEstudianteNavigation.ApellidoMaterno,
 
+                    Grupo = e.IdGrupoNavigation.IdGrupoBaseNavigation.Nombre,
+                    Matricula = e.Matricula,
+                    Estatus = e.Estatus
+                })
+                .FirstOrDefaultAsync();
 
-            /// Consulta para obtener el grupo actual @GG
             var grupoActual = await _context.Estudiantes
                 .Where(e => e.IdEstudiante == idUsuario)
                 .Select(e => e.IdGrupo)
                 .FirstOrDefaultAsync();
 
-            /// Consulta para obtener estudiantes con sus calificaciones, incluyendo estudiantes sin calificaciones @GG
             var calificaciones = await _context.CalificacionAlumnos
                 .Where(c => c.IdEstudiante == idUsuario && c.IdGrupo == grupoActual)
                 .Include(c => c.IdDocenteNavigation)
                     .ThenInclude(d => d.IdDocenteNavigation)
-                .Include(c => c.IdGrupoNavigation)
-                    .ThenInclude(d => d.IdGrupoBaseNavigation)
-                .Include(c => c.IdEstudianteNavigation)
                 .Include(c => c.IdMateriaNavigation)
                 .ToListAsync();
+
+            ViewBag.Alumno = alumno;
 
             return View(calificaciones);
         }

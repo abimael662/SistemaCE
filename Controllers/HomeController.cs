@@ -105,7 +105,7 @@ namespace SistemaCE.Controllers
 
             if (rol == "docente")
             {
-                return View("MainDocente");
+                return RedirectToAction("MainDocente");
             }
             else if (rol == "estudiante")
             {
@@ -128,6 +128,16 @@ namespace SistemaCE.Controllers
                     .ThenInclude(e => e.IdGrupoNavigation)
                     .ThenInclude(j => j.IdGrupoBaseNavigation)
                 .FirstOrDefault(p => p.IdPersona == idUsuario);
+
+            return View(datos);
+        }
+        public IActionResult MainDocente()
+        {
+            int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+
+            var datos = _context.Docentes
+                .Include(d => d.IdDocenteNavigation)
+                .FirstOrDefault(d => d.IdDocenteNavigation.IdPersona == idUsuario);
 
             return View(datos);
         }

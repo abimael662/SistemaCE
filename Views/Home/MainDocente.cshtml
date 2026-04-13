@@ -1,0 +1,52 @@
+﻿@using SistemaCE.Helpers
+@model SistemaCE.Models.Docente
+@{
+    ViewData["Title"] = "MainDocente";
+    Layout = "_Layout";
+}
+<div class="flex flex-col h-full justify-evenly items-center">
+
+    <!-- SALUDO -->
+    <p class="text-3xl font-bold">
+        ¡Hola! @SessionHelper.GetName(User)
+    </p>
+
+    <!-- BLOQUE PRINCIPAL -->
+    <div class="flex items-center gap-10">
+
+        <!-- FOTO -->
+        <img class="w-32 h-32 object-cover border" src="~/imagenes/foto_perfil.png" />
+        <p>@(Model == null ? "NO HAY DOCENTE" : "SI HAY DOCENTE")</p>        <!-- DATOS -->
+        <p>@(Model == null ? "MODEL NULL ❌" : "MODEL OK ✅")</p>
+        <div class="space-y-2 text-lg">
+            <p>
+                <span class="font-semibold">Nombre:</span>
+                @SessionHelper.GetName(User)
+            </p>
+
+            <p>
+                <span class="font-semibold">Apellido Paterno:</span>
+                @SessionHelper.GetValue(User, "ApellidoPaterno")
+            </p>
+
+            <p>
+                <span class="font-semibold">Apellido Materno:</span>
+                @SessionHelper.GetValue(User, "ApellidoMaterno")
+            </p>
+        </div>
+
+    </div>
+
+    <!-- GRUPO -->
+    <div class="text-center">
+        <p class="text-xl font-semibold">Cedula</p>
+        <p class="text-lg text-blue-600">@Model?.CedulaProfesional</p>
+    </div>
+
+    <!-- ESTATUS -->
+    <div class="text-center">
+        </p>
+    </div>
+
+</div>
+
