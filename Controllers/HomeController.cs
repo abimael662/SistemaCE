@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using System.Security.Claims;
 
 namespace SistemaCE.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly SceContext _context;
@@ -21,12 +22,7 @@ namespace SistemaCE.Controllers
 
         private async Task GuardarSesionUsuario(Persona persona)
         {
-
-            var identity = new ClaimsIdentity(
-           CookieAuthenticationDefaults.AuthenticationScheme,
-           ClaimTypes.Name,
-           ClaimTypes.Role
-           );
+            var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role );
 
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, persona.IdPersona.ToString()));
             identity.AddClaim(new Claim(ClaimTypes.Name, persona.Nombre!));
@@ -56,33 +52,46 @@ namespace SistemaCE.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string usuario, string password)
         {
-            try
+            if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(password))
             {
-                if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(password))
-                {
-                    ViewBag.Error = "Correo y contraseña son requeridos";
-                    return View("Index");
-                }
+                ViewBag.Error = "Correo y contraseña son requeridos";
+                return View();
+            }
 
-                var persona = _context.Personas
-                    .Where(p => p.PersonaUsuario != null &&
-                    p.PersonaUsuario.Usuario == usuario &&
-                                p.PersonaUsuario.Password == password)
-                    .FirstOrDefault();
+            var personaUsuario = await _context.PersonaUsuarios
+                .Include(p => p.IdPersonaNavigation)
+                .FirstOrDefaultAsync(p => p.Usuario == usuario);
 
-                if (persona != null)
-                {
-                    await GuardarSesionUsuario(persona);
-                    return RedirectToAction("Main", "Home");
-                }
-
+            if (personaUsuario == null)
+            {
                 ViewBag.Error = "Credenciales incorrectas";
-                return View("Index");
+                return View();
             }
-            catch (Exception ex)
+
+            var hasher = new PasswordHasher<PersonaUsuario>();
+
+            var result = hasher.VerifyHashedPassword(
+                personaUsuario,
+                personaUsuario.Password,
+                password
+            );
+
+            if (result == PasswordVerificationResult.Success)
             {
-                return BadRequest(ex.Message);
+                var persona = personaUsuario.IdPersonaNavigation;
+
+                if (persona == null)
+                {
+                    ViewBag.Error = "No se encontró la persona asociada";
+                    return View();
+                }
+
+                await GuardarSesionUsuario(persona);
+                return RedirectToAction("Main", "Home");
             }
+
+            ViewBag.Error = "Credenciales incorrectas";
+            return View();
         }
 
         public async Task<IActionResult> Logout()
@@ -98,27 +107,24 @@ namespace SistemaCE.Controllers
             return View();
         }
 
-        [Authorize]
         public IActionResult Main()
         {
             var rol = User.FindFirst(ClaimTypes.Role)?.Value;
 
             if (rol == "docente")
             {
-                return RedirectToAction("MainDocente");
+                return RedirectToAction("MainDocente" , "Home");
             }
             else if (rol == "estudiante")
             {
-                return RedirectToAction("MainAlumno");
-                //return View("MainAlumno");
+                return RedirectToAction("MainAlumno", "Home");
             }
             else
             {
-                return View("MainAdmin");
+                return RedirectToAction("MainAdmin", "Home");
             }
         }
 
-        [Authorize]
         public IActionResult MainAlumno()
         {
             int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
@@ -131,6 +137,7 @@ namespace SistemaCE.Controllers
 
             return View(datos);
         }
+
         public IActionResult MainDocente()
         {
             int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
@@ -142,73 +149,16 @@ namespace SistemaCE.Controllers
             return View(datos);
         }
 
-        // GET: LoginController/Details/5
-        public ActionResult Details(int id)
+        public IActionResult MainAdmin()
         {
-            return View();
-        }
+            int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
 
-        // GET: LoginController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+            var datos = _context.Administrativos
+                .Include(d => d.IdAdministrativoNavigation)
+                .FirstOrDefault(d => d.IdAdministrativoNavigation.IdPersona == idUsuario);
+            //System.InvalidOperationException: 'The expression 'd.IdAdministrativo' is invalid inside an 'Include' operation, since it does not represent a property access: 't => t.MyProperty'. To target navigations declared on derived types, use casting ('t => ((Derived)t).MyProperty') or the ' as' operator ('t => (t as Derived).MyProperty'). Collection navigation access can be filtered by composing Where, OrderBy(Descending), ThenBy(Descending), Skip or Take operations. For more information on including related data, see https://go.microsoft.com/fwlink/?LinkID=746393.'
 
-        // POST: LoginController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: LoginController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: LoginController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: LoginController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: LoginController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return View(datos);
         }
     }
 }

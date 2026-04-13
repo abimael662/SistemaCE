@@ -1,7 +1,7 @@
 ﻿@model SistemaCE.Models.Estudiante
 
 @{
-    ViewData["Title"] = "Editar Administrativo";
+    ViewData["Title"] = "Editar Estudiante";
 }
 
 <link rel="stylesheet" href="~/css/edit_global.css" />
@@ -9,7 +9,7 @@
 
     <div class="card-form">
 
-        <div class="title">Editar Administrativo</div>
+        <div class="title">Editar Estudiante</div>
         <div class="subtitle">Modifica la información del registro</div>
 
         <form asp-action="Edit">
@@ -21,15 +21,6 @@
                 <select asp-for="IdGrupo" class="form-control" asp-items="ViewBag.IdGrupo"></select>
                 <span asp-validation-for="IdGrupo" class="text-danger"></span>
             </div>
-
-            @* <div class="form-group">
-                <label>Empleado asignado</label>
-                <select asp-for="NumeroEmpleado"
-                        class="form-control"
-                        asp-items="ViewBag.NumeroEmpleado">
-                </select>
-                <span asp-validation-for="NumeroEmpleado" class="text-danger"></span>
-            </div> *@
 
             <div class="form-group">
                 <label asp-for="Matricula" class="control-label"></label>

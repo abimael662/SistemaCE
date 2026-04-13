@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace SistemaCE.Models;
@@ -23,10 +24,13 @@ public partial class Grupo
 
     public virtual ICollection<Estudiante> Estudiantes { get; set; } = new List<Estudiante>();
 
+    [ValidateNever]
     public virtual Carrera? IdCarreraNavigation { get; set; }
 
+    [ValidateNever]
     public virtual GrupoBase? IdGrupoBaseNavigation { get; set; }
 
+    [ValidateNever]
     public virtual Periodo? IdPeriodoNavigation { get; set; }
 
     public virtual ICollection<Inscripcion> Inscripcions { get; set; } = new List<Inscripcion>();

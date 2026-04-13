@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace SistemaCE.Models;
@@ -15,7 +16,9 @@ public partial class Carrera
 
     public virtual ICollection<Grupo> Grupos { get; set; } = new List<Grupo>();
 
+    [ValidateNever]
     public virtual Division? IdDivisionNavigation { get; set; }
 
+    [ValidateNever]
     public virtual Nivel? IdNivelNavigation { get; set; }
 }

@@ -46,8 +46,11 @@
                 }
                 else
                 {
-                    <a href="#" class="block p-2 hover:bg-gray-100">⚙ Admin panel</a>
-                    <a href="#" class="block p-2 hover:bg-gray-100">👥 Usuarios</a>
+                    <a asp-action="Index" asp-controller="Personas" class="block p-2 hover:bg-gray-100">👥 Usuarios</a>
+                    <a asp-action="Index" asp-controller="Estudiantes" class="block p-2 hover:bg-gray-100">Estudiantes</a>
+                    <a asp-action="Index" asp-controller="Docentes" class="block p-2 hover:bg-gray-100">Docente</a>
+                    <a asp-action="Index" asp-controller="Grupos" class="block p-2 hover:bg-gray-100">Grupos</a>
+                    <a asp-action="Index" asp-controller="Divisions" class="block p-2 hover:bg-gray-100">Divisiones</a>
                 }
             }
 

@@ -1,6 +1,58 @@
 ﻿@model SistemaCE.Models.Persona
 
 @{
+    ViewData["Title"] = "Detalles Usuario" + Model.Nombre;
+}
+
+<link rel="stylesheet" href="~/css/details_global.css" />
+<div class="page-container">
+
+    <div class="card-details">
+
+        <div class="title">Detalles del Usuario</div>
+        <div class="subtitle">Información completa del registro</div>
+
+        <div class="grid">
+
+            <div class="item">
+                <div class="label">Nombre</div>
+                <div class="value">@Model.Nombre</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Apellido Paterno</div>
+                <div class="value">@Model.ApellidoPaterno</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Apellido Materno</div>
+                <div class="value">@Model.ApellidoMaterno</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Curp</div>
+                <div class="value">@Model.Curp</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Fecha Nacimiento</div>
+                <div class="value">@Model.FechaNacimiento</div>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <a asp-action="Edit" asp-route-id="@Model?.IdPersona" class="btn btn-edit">Editar</a>
+            <a asp-action="Index" class="btn btn-back">← Volver</a>
+        </div>
+
+    </div>
+
+</div>
+
+@* @model SistemaCE.Models.Persona
+
+@{
     ViewData["Title"] = "Details";
 }
 
@@ -45,4 +97,4 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.IdPersona">Edit</a> |
     <a asp-action="Index">Back to List</a>
-</div>
+</div> *@

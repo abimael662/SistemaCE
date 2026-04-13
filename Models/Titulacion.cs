@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace SistemaCE.Models;
@@ -19,7 +20,9 @@ public partial class Titulacion
 
     public int? Estado { get; set; }
 
+    [ValidateNever]
     public virtual Estudiante? IdEstudianteNavigation { get; set; }
 
+    [ValidateNever]
     public virtual Nivel? IdNivelNavigation { get; set; }
 }

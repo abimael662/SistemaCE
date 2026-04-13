@@ -1,6 +1,62 @@
 ﻿@model SistemaCE.Models.Persona
 
 @{
+    ViewData["Title"] = "Eliminar Usuario";
+}
+<link rel="stylesheet" href="~/css/delete_global.css" />
+<div class="page-container">
+
+    <div class="card-delete">
+
+        <div class="title">Eliminar Usuario</div>
+        <div class="subtitle">Esta acción no se puede deshacer</div>
+
+        <div class="warning-box">
+            ⚠️ ¿Estás seguro de eliminar este registro?
+        </div>
+
+        <div class="grid">
+
+            <div class="item">
+                <div class="label">Nombre</div>
+                <div class="value">@Model.Nombre</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Apellido Paterno</div>
+                <div class="value">@Model.ApellidoPaterno</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Apellido Materno</div>
+                <div class="value">@Model.ApellidoMaterno</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Curp</div>
+                <div class="value">@Model.Curp</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Fecha Nacimiento</div>
+                <div class="value">@Model.FechaNacimiento</div>
+            </div>
+        </div>
+
+        <form asp-action="Delete" class="actions">
+            <input type="hidden" asp-for="IdPersona" />
+
+            <a asp-action="Index" class="btn btn-back">← Cancelar</a>
+            <input type="submit" value="Eliminar" class="btn btn-delete" />
+        </form>
+
+    </div>
+
+</div>
+
+@* @model SistemaCE.Models.Persona
+
+@{
     ViewData["Title"] = "Delete";
 }
 
@@ -48,4 +104,4 @@
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
-</div>
+</div> *@

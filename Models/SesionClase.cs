@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace SistemaCE.Models;
@@ -21,9 +22,12 @@ public partial class SesionClase
 
     public virtual ICollection<Asistencium> Asistencia { get; set; } = new List<Asistencium>();
 
+    [ValidateNever]
     public virtual Docente? IdDocenteNavigation { get; set; }
 
+    [ValidateNever]
     public virtual Grupo? IdGrupoNavigation { get; set; }
 
+    [ValidateNever]
     public virtual Materia? IdMateriaNavigation { get; set; }
 }

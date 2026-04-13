@@ -55,14 +55,8 @@ namespace SistemaCE.Controllers
         }
 
         // GET: Estudiantes/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            // 🔥 SOLO PERSONAS QUE NO SON ESTUDIANTES
-            //var personasDisponibles = _context.Personas
-            //    .Where(p => !_context.Estudiantes
-            //        .Any(e => e.IdEstudiante == p.IdPersona))
-            //    .ToList();
-
             /// Obtenemos todas las personas @GG
             var personas = _context.Personas.ToList();
 
@@ -78,7 +72,21 @@ namespace SistemaCE.Controllers
                 .ToList();
 
             ViewData["IdEstudiante"] = new SelectList(personasDisponibles, "IdPersona", "Nombre");
-            ViewData["IdGrupo"] = new SelectList(_context.Grupos, "IdGrupo", "IdGrupoBase");
+
+            var grupos = await _context.Grupos
+                .Include(g => g.IdGrupoBaseNavigation)
+                .ToListAsync();
+
+            ViewData["IdGrupo"] = new SelectList(
+                grupos.Select(g => new
+                {
+                    g.IdGrupo,
+                    Nombre = g.IdGrupoBaseNavigation.Nombre
+                }),
+                "IdGrupo",
+                "Nombre",
+                null);
+
             ViewData["Estatus"] = new SelectList(
                 Enum.GetValues(typeof(EstatusEstudiante))
                 .Cast<EstatusEstudiante>()
@@ -138,7 +146,21 @@ namespace SistemaCE.Controllers
                 .ToList();
 
             ViewData["IdEstudiante"] = new SelectList(personasDisponibles, "IdPersona", "Nombre", estudiante.IdEstudiante);
-            ViewData["IdGrupo"] = new SelectList(_context.Grupos, "IdGrupo", "Grupo1", estudiante.IdGrupo);
+
+            var grupos = await _context.Grupos
+                .Include(g => g.IdGrupoBaseNavigation)
+                .ToListAsync();
+
+            ViewData["IdGrupo"] = new SelectList(
+                grupos.Select(g => new
+                {
+                    g.IdGrupo,
+                    Nombre = g.IdGrupoBaseNavigation.Nombre
+                }),
+                "IdGrupo",
+                "Nombre",
+                estudiante.IdGrupo);
+            //ViewData["IdGrupo"] = new SelectList(_context.Grupos, "IdGrupo", "Grupo1", estudiante.IdGrupo);
 
             return View(estudiante);
         }
@@ -156,8 +178,23 @@ namespace SistemaCE.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdEstudiante"] = new SelectList(_context.Personas, "IdPersona", "IdPersona", estudiante.IdEstudiante);
-            ViewData["IdGrupo"] = new SelectList(_context.Grupos, "IdGrupo", "IdGrupo", estudiante.IdGrupo);
+
+
+            //ViewData["IdEstudiante"] = new SelectList(_context.Personas, "IdPersona", "IdPersona", estudiante.IdEstudiante);
+            var grupos = await _context.Grupos
+                .Include(g => g.IdGrupoBaseNavigation)
+                .ToListAsync();
+            
+            ViewData["IdGrupo"] = new SelectList(
+                grupos.Select(g => new
+                {
+                    g.IdGrupo,
+                    Nombre = g.IdGrupoBaseNavigation.Nombre
+                }),
+                "IdGrupo",
+                "Nombre",
+                estudiante.IdGrupo);
+
             return View(estudiante);
         }
 

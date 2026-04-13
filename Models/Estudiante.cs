@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace SistemaCE.Models;
@@ -21,8 +22,10 @@ public partial class Estudiante
 
     public virtual ICollection<Certificado> Certificados { get; set; } = new List<Certificado>();
 
-    public virtual Persona IdEstudianteNavigation { get; set; } = null!;
+    [ValidateNever]
+    public virtual Persona? IdEstudianteNavigation { get; set; }
 
+    [ValidateNever]
     public virtual Grupo? IdGrupoNavigation { get; set; }
 
     public virtual ICollection<Inscripcion> Inscripcions { get; set; } = new List<Inscripcion>();

@@ -6,14 +6,9 @@ namespace SistemaCE.Models;
 
 public partial class SceContext : DbContext
 {
-    public SceContext()
-    {
-    }
+    public SceContext() {}
 
-    public SceContext(DbContextOptions<SceContext> options)
-        : base(options)
-    {
-    }
+    public SceContext(DbContextOptions<SceContext> options) : base(options) {}
 
     public virtual DbSet<Administrativo> Administrativos { get; set; }
 
