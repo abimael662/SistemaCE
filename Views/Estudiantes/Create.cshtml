@@ -3,13 +3,18 @@
 @{
     ViewData["Title"] = "Crear Estudiante";
 }
+<link rel="stylesheet" href="~/css/create_globla.css" />
 
-<div class="max-w-xl mx-auto mt-8">
-    <h1 class="text-2xl font-bold mb-4">Crear Estudiante</h1>
+<div class="page-container">
 
-    <form asp-action="Create" method="post" class="space-y-4">
+    <div class="card-form">
 
-        <!-- ERRORES -->
+        <div class="title">Crear Estudiante</div>
+        <div class="subtitle">Registra un nuevo administrativo en el sistema</div>
+
+        <form asp-action="Create">
+
+             <!-- ERRORES -->
         <div asp-validation-summary="All" class="text-red-500 text-sm"></div>
 
         <!-- PERSONA -->
@@ -70,7 +75,12 @@
             </button>
         </div>
 
-    </form>
+        </form>
+
+        <a asp-action="Index" class="back-link">← Volver al listado</a>
+
+    </div>
+
 </div>
 
 @section Scripts {

@@ -1,6 +1,59 @@
 ﻿@model IEnumerable<SistemaCE.Models.Persona>
 
 @{
+    ViewData["Title"] = "Usuarios";
+}
+
+<link rel="stylesheet" href="~/css/index_global.css" />
+
+<div class="page-container">
+
+    <div class="header">
+        <h1>Usuarios</h1>
+
+        <a asp-action="Create" class="btn-create">
+            + Nuevo Usuario
+        </a>
+    </div>
+
+    <div class="table-container">
+
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th ">Nombre</th>
+                    <th ">Apellido Paterno</th>
+                    <th ">Apellido Materno</th>
+                    <th ">CURP</th>
+                    <th ">Fecha Nacimiento</th>
+                    <th class="px-6 py-3 text-center">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Nombre</td>
+                        <td>@item.ApellidoPaterno</td>
+                        <td>@item.ApellidoMaterno</td>
+                        <td>@item.Curp</td>
+
+                        <td class="actions">
+                            <a asp-action="Edit" asp-route-id="@item.IdPersona">Editar</a>
+                            <a asp-action="Details" asp-route-id="@item.IdPersona">Ver</a>
+                            <a asp-action="Delete" asp-route-id="@item.IdPersona">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+@* @model IEnumerable<SistemaCE.Models.Persona>
+
+@{
     ViewData["Title"] = "Personas";
 }
 
@@ -86,4 +139,4 @@
         </table>
     </div>
 
-</div>
+</div> *@

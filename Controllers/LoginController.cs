@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SistemaCE.Models;
 using System.Security.Claims;
 
@@ -49,34 +51,80 @@ namespace SistemaCE.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string usuario, string password)
         {
-            try
+            if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(password))
             {
-                if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(password))
-                {
-                    ViewBag.Error = "Correo y contraseña son requeridos";
-                    return View();
-                }
+                ViewBag.Error = "Correo y contraseña son requeridos";
+                return View();
+            }
 
-                var persona = _context.Personas
-                    .Where(p => p.PersonaUsuario != null &&
-                    p.PersonaUsuario.Usuario == usuario &&
-                                p.PersonaUsuario.Password == password)
-                    .FirstOrDefault();
+            var personaUsuario = await _context.PersonaUsuarios
+    .Include(p => p.IdPersonaNavigation)
+    .FirstOrDefaultAsync(p => p.Usuario == usuario);
 
-                if (persona != null)
-                {
-                    await GuardarSesionUsuario(persona);
-                    return RedirectToAction("Index", "Home");
-                }
-
+            if (personaUsuario == null)
+            {
                 ViewBag.Error = "Credenciales incorrectas";
                 return View();
             }
-            catch (Exception ex)
+
+            var hasher = new PasswordHasher<PersonaUsuario>();
+
+            var result = hasher.VerifyHashedPassword(
+                personaUsuario,
+                personaUsuario.Password,
+                password
+            );
+
+            if (result == PasswordVerificationResult.Success)
             {
-                return BadRequest(ex.Message);
+                var persona = personaUsuario.IdPersonaNavigation;
+
+                if (persona == null)
+                {
+                    ViewBag.Error = "No se encontró la persona asociada";
+                    return View();
+                }
+
+                await GuardarSesionUsuario(persona);
+                return RedirectToAction("Index", "Home");
             }
+
+            ViewBag.Error = "Credenciales incorrectas";
+            return View();
         }
+
+        //[AllowAnonymous]
+        //[HttpPost]
+        //public async Task<IActionResult> Login(string usuario, string password)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(password))
+        //        {
+        //            ViewBag.Error = "Correo y contraseña son requeridos";
+        //            return View();
+        //        }
+
+        //        var persona = _context.Personas
+        //            .Where(p => p.PersonaUsuario != null &&
+        //            p.PersonaUsuario.Usuario == usuario &&
+        //                        p.PersonaUsuario.Password == password)
+        //            .FirstOrDefault();
+
+        //        if (persona != null)
+        //        {
+        //            await GuardarSesionUsuario(persona);
+        //            return RedirectToAction("Index", "Home");
+        //        }
+
+        //        ViewBag.Error = "Credenciales incorrectas";
+        //        return View();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
         public async Task<IActionResult> Logout()
         {

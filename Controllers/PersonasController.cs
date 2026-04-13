@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaCE.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SistemaCE.Controllers
 {
@@ -59,10 +62,44 @@ namespace SistemaCE.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 _context.Add(persona);
                 await _context.SaveChangesAsync();
+
+                string area = "SEC";
+                var random = new Random();
+
+                string passwordPlano;
+                string passwordHash;
+
+                var hasher = new PasswordHasher<Persona>();
+
+                do
+                {
+                    int numero = random.Next(0, 10000);
+
+                    passwordPlano = $"{area}{numero:D7}";
+
+                    passwordHash = hasher.HashPassword(persona, passwordPlano);
+
+                    Console.WriteLine("ESTA ES LA CONTRASEÑA MALDITO PERDEDOR, CIEGO" + passwordPlano);
+
+                }
+                while (await _context.PersonaUsuarios
+                    .AnyAsync(e => e.Password == passwordHash && e.Usuario == persona.Nombre && e.IdPersona == persona.IdPersona));
+
+                var personaUsuario = new PersonaUsuario
+                {
+                    IdPersona = persona.IdPersona,
+                    Usuario = persona.Nombre,
+                    Password = passwordHash
+                };
+                _context.PersonaUsuarios.Add(personaUsuario);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(persona);
         }
 
