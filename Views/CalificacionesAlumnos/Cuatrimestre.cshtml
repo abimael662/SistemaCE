@@ -1,0 +1,61 @@
+﻿@model IEnumerable<SistemaCE.Models.CalificacionAlumno>
+
+@{
+    ViewData["Title"] = "Cuatrimestre";
+}
+
+<h1>Cuatrimestre</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdDocenteNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdGrupoNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdMateriaNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Parcial1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Parcial2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Parcial3)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PromedioFinal)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                    @Html.DisplayFor(modelItem => item.IdDocenteNavigation.IdDocenteNavigation!.Nombre)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.IdGrupoNavigation.IdGrupoBaseNavigation!.Nombre)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.IdMateriaNavigation.Nombre)
+            </td>
+                <td>
+                    @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.Parcial1)
+                </td>
+                <td>
+                    @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.Parcial2)
+                </td>
+                <td>
+                    @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.Parcial3)
+                </td>
+                <td>
+                    @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.PromedioFinal)
+                </td>
+        </tr>
+}
+    </tbody>
+</table>

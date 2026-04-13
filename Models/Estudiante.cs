@@ -13,7 +13,7 @@ public partial class Estudiante
 
     public DateOnly? FechaIngreso { get; set; }
 
-    public int? Estatus { get; set; }
+    //public int? Estatus { get; set; }
 
     public virtual ICollection<Asistencium> Asistencia { get; set; } = new List<Asistencium>();
 
@@ -28,4 +28,12 @@ public partial class Estudiante
     public virtual ICollection<Inscripcion> Inscripcions { get; set; } = new List<Inscripcion>();
 
     public virtual ICollection<Titulacion> Titulacions { get; set; } = new List<Titulacion>();
+    public EstatusEstudiante? Estatus { get; set; }
+}
+
+public enum EstatusEstudiante
+{
+    Activo = 1,
+    Baja = 2,
+    Egresado = 3
 }

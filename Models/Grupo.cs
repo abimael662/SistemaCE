@@ -9,11 +9,11 @@ public partial class Grupo
 
     public int? IdCarrera { get; set; }
 
-    public string? Grupo1 { get; set; }
-
-    public int? Cuatrimestre { get; set; }
-
     public string? Turno { get; set; }
+
+    public int? IdGrupoBase { get; set; }
+
+    public int? IdPeriodo { get; set; }
 
     public virtual ICollection<CalificacionAlumno> CalificacionAlumnos { get; set; } = new List<CalificacionAlumno>();
 
@@ -24,6 +24,10 @@ public partial class Grupo
     public virtual ICollection<Estudiante> Estudiantes { get; set; } = new List<Estudiante>();
 
     public virtual Carrera? IdCarreraNavigation { get; set; }
+
+    public virtual GrupoBase? IdGrupoBaseNavigation { get; set; }
+
+    public virtual Periodo? IdPeriodoNavigation { get; set; }
 
     public virtual ICollection<Inscripcion> Inscripcions { get; set; } = new List<Inscripcion>();
 

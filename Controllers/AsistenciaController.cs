@@ -33,11 +33,16 @@ namespace SistemaCE.Controllers
                 .FirstOrDefaultAsync();
 
             /// Obtener los grupos asociados al docente utilizando el ID del usuario @GG
-            var gruposDocente = await (from d in _context.DocenteMateriaGrupos
-                                       join g in _context.Grupos
-                                           on d.IdGrupo equals g.IdGrupo
-                                       where d.IdDocente == idUsuario
-                                       select g).Distinct().ToListAsync();
+            var gruposDocente = await _context.DocenteMateriaGrupos
+                .Where(d => d.IdDocente == idUsuario)
+                .Select(d => d.IdGrupoNavigation)
+                .Where(g => g != null)
+                .Select(g => new {
+                    IdGrupo = g.IdGrupo,
+                    Nombre = g.IdGrupoBaseNavigation.Nombre
+                })
+                .Distinct()
+                .ToListAsync();
 
             var materias = await (from d in _context.DocenteMateriaGrupos
                                   join m in _context.Materias
@@ -58,6 +63,16 @@ namespace SistemaCE.Controllers
                                   where c.IdDocente == idUsuario
                                   select g.Nombre)
                     .FirstOrDefaultAsync();
+
+            if (!grupoId.HasValue && gruposDocente.Any())
+            {
+                grupoId = gruposDocente.First().IdGrupo;
+            }
+
+            if (!materiaId.HasValue && materias.Any())
+            {
+                materiaId = materias.First().IdMateria;
+            }
 
             /// Pasar los datos obtenidos a la vista utilizando ViewBag @GG
             ViewBag.Docente = docente;

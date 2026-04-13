@@ -6,64 +6,63 @@
 
 <h1>General</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<form method="get">
+    <select name="grupoId" onchange="this.form.submit()">
+        <option value="">-- Todos --</option>
+
+        @foreach (var grupo in ViewBag.Grupos)
+        {
+            <option value="@grupo.IdGrupo"
+                    selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? "selected" : null)">
+                @grupo.Nombre
+            </option>
+        }
+    </select>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Parcial1)
+                Docente
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Parcial2)
+                Materia
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Parcial3)
+                Primer Parcial
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PromedioFinal)
+                Segundo Parcial
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdDocenteNavigation)
+                Tercer Parcial
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdEstudianteNavigation)
+                Promedio Final
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdMateriaNavigation)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdDocenteNavigation.IdDocenteNavigation!.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdMateriaNavigation.Nombre)
+                </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Parcial1)
+                    @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.Parcial1)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Parcial2)
+                    @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.Parcial2)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Parcial3)
+                    @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.Parcial3)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PromedioFinal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdDocenteNavigation.IdDocente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdEstudianteNavigation.IdEstudiante)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdMateriaNavigation.IdMateria)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdCalificacion">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdCalificacion">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdCalificacion">Delete</a>
+                    @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.PromedioFinal)
             </td>
         </tr>
 }

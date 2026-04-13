@@ -46,9 +46,18 @@
         </div>
 
         <!-- ESTATUS -->
-        <div>
+        @* <div>
             <label asp-for="Estatus"></label>
             <input asp-for="Estatus" class="w-full border px-3 py-2 rounded" />
+            <span asp-validation-for="Estatus" class="text-red-500 text-sm"></span>
+        </div> *@
+
+        <div>
+            <label asp-for="Estatus"></label>
+            <select asp-for="Estatus"
+                    asp-items="ViewBag.Estatus"
+                    class="w-full border px-3 py-2 rounded">
+            </select>
             <span asp-validation-for="Estatus" class="text-red-500 text-sm"></span>
         </div>
 
