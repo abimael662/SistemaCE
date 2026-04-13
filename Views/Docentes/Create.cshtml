@@ -1,70 +1,62 @@
 ﻿@model SistemaCE.Models.Docente
 
-<h1 class="text-2xl font-bold mb-4">Crear Docente</h1>
+@{
+    ViewData["Title"] = "Crear Docente";
+}
 
-<form asp-action="Create" class="space-y-4">
-    <select asp-for="IdDocente"
-            class="mt-1 block w-full border-gray-300 rounded-md p-2"
-            asp-items="ViewBag.IdDocente">
-        <option value="">Seleccione una persona</option>
-    </select>
-    <span asp-validation-for="IdDocente" class="text-red-600 text-sm"></span>
+<link rel="stylesheet" href="~/css/create_globla.css" />
 
-    @* <select asp-for="NumeroEmpleado"
-            class="mt-1 block w-full border-gray-300 rounded-md p-2"
-            asp-items="ViewBag.NumeroEmpleado">
-        <option value="">Seleccione un empleado</option>
-    </select>
-    <span asp-validation-for="NumeroEmpleado" class="text-red-600 text-sm"></span> *@
-    @* <!-- PERSONA -->
-    <div>
-        <label asp-for="IdDocente" class="block text-sm font-medium text-gray-700">Persona</label>
-        <select asp-for="IdDocente"
-                class="mt-1 block w-full border-gray-300 rounded-md p-2"
-                asp-items="ViewBag.IdDocente ?? new SelectList(Enumerable.Empty<SelectListItem>())">
-            <option value="">Seleccione una persona</option>
-        </select>
-        <span asp-validation-for="IdDocente" class="text-red-600 text-sm"></span>
+<div class="page-container">
+
+    <div class="card-form">
+
+        <div class="title">Crear Docente</div>
+        <div class="subtitle">Registra un nuevo docente en el sistema</div>
+
+        <form asp-action="Create">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label>Persona</label>
+                <select asp-for="IdDocente"
+                        class="form-control"
+                        asp-items="ViewBag.IdDocente">
+                    <option value="">Seleccione una persona</option>
+                </select>
+                <span asp-validation-for="IdDocente" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CedulaProfesional"></label>
+                <input asp-for="CedulaProfesional" />
+                <span asp-validation-for="CedulaProfesional" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Rfc"></label>
+                <input asp-for="Rfc" />
+                <span asp-validation-for="Rfc" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Sueldo"></label>
+                <input asp-for="Sueldo" type="number" step="0.01" />
+                <span asp-validation-for="Sueldo" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn-primary">Guardar</button>
+
+        </form>
+
+        <a asp-action="Index" class="back-link">← Volver al listado</a>
+
     </div>
 
-    <!-- EMPLEADO -->
-    <div>
-        <label asp-for="NumeroEmpleado" class="block text-sm font-medium text-gray-700">Empleado</label>
-        <select asp-for="NumeroEmpleado"
-                class="mt-1 block w-full border-gray-300 rounded-md p-2"
-                asp-items="ViewBag.NumeroEmpleado ?? new SelectList(Enumerable.Empty<SelectListItem>())">
-            <option value="">Seleccione un empleado</option>
-        </select>
-        <span asp-validation-for="NumeroEmpleado" class="text-red-600 text-sm"></span>
-    </div> *@
+</div>
 
-    <!-- CEDULA -->
-    <div>
-        <label asp-for="CedulaProfesional" class="block text-sm font-medium text-gray-700"></label>
-        <input asp-for="CedulaProfesional" class="mt-1 block w-full border-gray-300 rounded-md p-2" />
-        <span asp-validation-for="CedulaProfesional" class="text-red-600 text-sm"></span>
-    </div>
-
-    <!-- RFC -->
-    <div>
-        <label asp-for="Rfc" class="block text-sm font-medium text-gray-700"></label>
-        <input asp-for="Rfc" class="mt-1 block w-full border-gray-300 rounded-md p-2" />
-        <span asp-validation-for="Rfc" class="text-red-600 text-sm"></span>
-    </div>
-
-    <!-- SUELDO -->
-    <div>
-        <label asp-for="Sueldo" class="block text-sm font-medium text-gray-700"></label>
-        <input asp-for="Sueldo" type="number" step="0.01"
-               class="mt-1 block w-full border-gray-300 rounded-md p-2" />
-        <span asp-validation-for="Sueldo" class="text-red-600 text-sm"></span>
-    </div>
-
-    <!-- BOTÓN -->
-    <div>
-        <button type="submit"
-                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-            Crear
-        </button>
-    </div>
-</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

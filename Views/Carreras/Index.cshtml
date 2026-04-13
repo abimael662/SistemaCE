@@ -1,47 +1,56 @@
 ﻿@model IEnumerable<SistemaCE.Models.Carrera>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Carreras";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/index_global.css" />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdDivisionNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdNivelNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdDivisionNavigation.IdDivision)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdNivelNavigation.IdNivel)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdCarrera">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdCarrera">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdCarrera">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="page-container">
+
+    <div class="header">
+        <h1>Carreras</h1>
+
+        <a asp-action="Create" class="btn-create">
+            + Nuevo registro
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>División</th>
+                    <th>Nivel</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Nombre</td>
+
+                        <td>
+                            @item.IdDivisionNavigation?.IdDivision
+                        </td>
+
+                        <td>
+                            @item.IdNivelNavigation?.IdNivel
+                        </td>
+
+                        <td class="actions">
+                            <a asp-action="Edit" asp-route-id="@item.IdCarrera">Editar</a>
+                            <a asp-action="Details" asp-route-id="@item.IdCarrera">Ver</a>
+                            <a asp-action="Delete" asp-route-id="@item.IdCarrera">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+</div>

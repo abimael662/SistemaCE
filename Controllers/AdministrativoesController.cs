@@ -10,7 +10,7 @@ using SistemaCE.Models;
 
 namespace SistemaCE.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "administrativo")]
     public class AdministrativoesController : Controller
     {
         private readonly SceContext _context;
@@ -50,26 +50,104 @@ namespace SistemaCE.Controllers
         // GET: Administrativoes/Create
         public IActionResult Create()
         {
-            ViewData["IdAdministrativo"] = new SelectList(_context.Personas, "IdPersona", "IdPersona");
-            ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "IdEmpleado");
+            var personas = _context.Personas.ToList();
+            var empleados = _context.Empleados.ToList();
+
+            var personasOcupadas = _context.Docentes.Select(d => d.IdDocente)
+                .Union(_context.Administrativos.Select(a => a.IdAdministrativo))
+                .Union(_context.Estudiantes.Select(e => e.IdEstudiante))
+                .ToList();
+
+            var personasDisponibles = personas
+                .Where(p => !personasOcupadas.Contains(p.IdPersona))
+                .ToList();
+
+            if (!personasDisponibles.Any())
+            {
+                ViewData["IdAdministrativo"] = new SelectList(Enumerable.Empty<object>());
+            }
+            else
+            {
+                var personasSelect = personasDisponibles.Select(p => new
+                {
+                    p.IdPersona,
+                    NombreCompleto = (p.Nombre ?? "") + " " +
+                                     (p.ApellidoPaterno ?? "") + " " +
+                                     (p.ApellidoMaterno ?? "")
+                }).ToList();
+
+                ViewData["IdAdministrativo"] = new SelectList(personasSelect, "IdPersona", "NombreCompleto", null);
+            }
+
+            ViewData["NumeroEmpleado"] = new SelectList(empleados, "IdEmpleado", "NumeroEmpleado", null);
+
             return View();
         }
-
         // POST: Administrativoes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdAdministrativo,NumeroEmpleado,Departamento,Puesto,Rfc,Sueldo")] Administrativo administrativo)
+        public async Task<IActionResult> Create([Bind("IdAdministrativo,Departamento,Puesto,Rfc,Sueldo")] Administrativo administrativo)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(administrativo);
+                var persona = await _context.Personas
+                    .FirstOrDefaultAsync(p => p.IdPersona == administrativo.IdAdministrativo);
+
+                if (persona == null)
+                {
+                    ModelState.AddModelError("", "La persona no existe");
+                    return View(administrativo);
+                }
+
+                string area = "SEC";
+                var random = new Random();
+                string numeroEmpleado;
+
+                do
+                {
+                    int numero = random.Next(0, 10000);
+                    numeroEmpleado = $"{area}{numero:D7}";
+                }
+                while (await _context.Empleados.AnyAsync(e => e.TipoEmpleado == numeroEmpleado));
+
+                var empleado = new Empleado
+                {
+                    TipoEmpleado = numeroEmpleado
+                };
+
+                await _context.Empleados.AddAsync(empleado);
                 await _context.SaveChangesAsync();
+
+                administrativo.IdAdministrativo = persona.IdPersona;
+                administrativo.NumeroEmpleado = empleado.IdEmpleado;
+
+                await _context.Administrativos.AddAsync(administrativo);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdAdministrativo"] = new SelectList(_context.Personas, "IdPersona", "IdPersona", administrativo.IdAdministrativo);
-            ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "IdEmpleado", administrativo.NumeroEmpleado);
+
+            // RECARGAR DROPDOWNS
+            var personas = _context.Personas
+                .Select(p => new
+                {
+                    p.IdPersona,
+                    NombreCompleto = (p.Nombre ?? "") + " " +
+                                     (p.ApellidoPaterno ?? "") + " " +
+                                     (p.ApellidoMaterno ?? "")
+                })
+                .ToList();
+
+            ViewData["IdAdministrativo"] =
+                new SelectList(personas, "IdPersona", "NombreCompleto", administrativo.IdAdministrativo);
+
+            var empleados = _context.Empleados.ToList();
+
+            ViewData["NumeroEmpleado"] =
+                new SelectList(empleados, "IdEmpleado", "TipoEmpleado", administrativo.NumeroEmpleado);
+
             return View(administrativo);
         }
 
@@ -86,46 +164,43 @@ namespace SistemaCE.Controllers
             {
                 return NotFound();
             }
+
             ViewData["IdAdministrativo"] = new SelectList(_context.Personas, "IdPersona", "IdPersona", administrativo.IdAdministrativo);
-            ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "IdEmpleado", administrativo.NumeroEmpleado);
+            //ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "TipoEmpleado", administrativo.NumeroEmpleado);
+
             return View(administrativo);
         }
 
-        // POST: Administrativoes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdAdministrativo,NumeroEmpleado,Departamento,Puesto,Rfc,Sueldo")] Administrativo administrativo)
+        public async Task<IActionResult> Edit(int id, [Bind("IdAdministrativo,Departamento,Puesto,Rfc,Sueldo")] Administrativo administrativo)
         {
             if (id != administrativo.IdAdministrativo)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(administrativo);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AdministrativoExists(administrativo.IdAdministrativo))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(administrativo);
             }
-            ViewData["IdAdministrativo"] = new SelectList(_context.Personas, "IdPersona", "IdPersona", administrativo.IdAdministrativo);
-            ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "IdEmpleado", administrativo.NumeroEmpleado);
-            return View(administrativo);
+
+            var existente = await _context.Administrativos
+                .FirstOrDefaultAsync(a => a.IdAdministrativo == id);
+
+            if (existente == null)
+            {
+                return NotFound();
+            }
+
+            existente.Departamento = administrativo.Departamento;
+            existente.Puesto = administrativo.Puesto;
+            existente.Rfc = administrativo.Rfc;
+            existente.Sueldo = administrativo.Sueldo;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Administrativoes/Delete/5

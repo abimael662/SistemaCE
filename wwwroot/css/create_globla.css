@@ -1,0 +1,155 @@
+﻿:root {
+    --primary-100: #EEEDEF;
+    --primary-300: #C9C7E6;
+    --primary-500: #8D7EDA;
+    --primary-700: #595999;
+    --primary-900: #2A1D6A;
+    --danger: #e74c3c;
+}
+
+/* GENERAL */
+body {
+    background: var(--primary-100);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+}
+
+/* CONTENEDORES */
+.page-container {
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+/* CARD FORM */
+.card-form,
+.card-delete,
+.card-details {
+    width: 100%;
+    max-width: 650px;
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+}
+
+/* TITULOS */
+.title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-900);
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: var(--primary-700);
+    margin-bottom: 20px;
+}
+
+/* FORM */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--primary-900);
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: 0.2s;
+}
+
+    input:focus,
+    select:focus {
+        border-color: var(--primary-500);
+        box-shadow: 0 0 0 3px rgba(141,126,218,0.2);
+    }
+
+/* BOTONES */
+.btn-primary {
+    width: 100%;
+    background: var(--primary-500);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+    .btn-primary:hover {
+        background: var(--primary-700);
+        transform: translateY(-2px);
+    }
+
+/* LINKS */
+.back-link {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    color: var(--primary-700);
+    text-decoration: none;
+}
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+/* TABLAS */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+    .custom-table thead {
+        background: var(--primary-500);
+        color: white;
+    }
+
+    .custom-table th,
+    .custom-table td {
+        padding: 14px;
+    }
+
+    .custom-table td {
+        color: var(--primary-900);
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .custom-table tbody tr:hover {
+        background: var(--primary-100);
+    }
+
+/* BOTONES ACCIONES */
+.btn {
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-edit {
+    color: var(--primary-500);
+}
+
+.btn-delete {
+    color: var(--danger);
+}
+
+.btn-back {
+    color: var(--primary-700);
+}

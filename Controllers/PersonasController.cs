@@ -10,7 +10,7 @@ using SistemaCE.Models;
 
 namespace SistemaCE.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "administrativo")]
     public class PersonasController : Controller
     {
         private readonly SceContext _context;
