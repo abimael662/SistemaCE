@@ -6,7 +6,14 @@ namespace SistemaCE.Models;
 
 public partial class SceContext : DbContext
 {
-    public SceContext(DbContextOptions<SceContext> options) : base (options) {}
+    public SceContext()
+    {
+    }
+
+    public SceContext(DbContextOptions<SceContext> options)
+        : base(options)
+    {
+    }
 
     public virtual DbSet<Administrativo> Administrativos { get; set; }
 
@@ -36,11 +43,15 @@ public partial class SceContext : DbContext
 
     public virtual DbSet<Grupo> Grupos { get; set; }
 
+    public virtual DbSet<GrupoBase> GrupoBases { get; set; }
+
     public virtual DbSet<Inscripcion> Inscripcions { get; set; }
 
     public virtual DbSet<Materia> Materias { get; set; }
 
     public virtual DbSet<Nivel> Nivels { get; set; }
+
+    public virtual DbSet<Periodo> Periodos { get; set; }
 
     public virtual DbSet<Persona> Personas { get; set; }
 
@@ -51,6 +62,10 @@ public partial class SceContext : DbContext
     public virtual DbSet<TipoComunicacion> TipoComunicacions { get; set; }
 
     public virtual DbSet<Titulacion> Titulacions { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=localhost;Database=sce;Username=postgres;Password=root");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -377,12 +392,12 @@ public partial class SceContext : DbContext
 
             entity.ToTable("grupo");
 
+            entity.HasIndex(e => new { e.IdGrupoBase, e.IdPeriodo }, "uq_grupo_base_periodo").IsUnique();
+
             entity.Property(e => e.IdGrupo).HasColumnName("id_grupo");
-            entity.Property(e => e.Cuatrimestre).HasColumnName("cuatrimestre");
-            entity.Property(e => e.Grupo1)
-                .HasMaxLength(10)
-                .HasColumnName("grupo");
             entity.Property(e => e.IdCarrera).HasColumnName("id_carrera");
+            entity.Property(e => e.IdGrupoBase).HasColumnName("id_grupo_base");
+            entity.Property(e => e.IdPeriodo).HasColumnName("id_periodo");
             entity.Property(e => e.Turno)
                 .HasMaxLength(10)
                 .HasColumnName("turno");
@@ -390,6 +405,26 @@ public partial class SceContext : DbContext
             entity.HasOne(d => d.IdCarreraNavigation).WithMany(p => p.Grupos)
                 .HasForeignKey(d => d.IdCarrera)
                 .HasConstraintName("grupo_id_carrera_fkey");
+
+            entity.HasOne(d => d.IdGrupoBaseNavigation).WithMany(p => p.Grupos)
+                .HasForeignKey(d => d.IdGrupoBase)
+                .HasConstraintName("grupo_id_grupo_base_fkey");
+
+            entity.HasOne(d => d.IdPeriodoNavigation).WithMany(p => p.Grupos)
+                .HasForeignKey(d => d.IdPeriodo)
+                .HasConstraintName("grupo_id_periodo_fkey");
+        });
+
+        modelBuilder.Entity<GrupoBase>(entity =>
+        {
+            entity.HasKey(e => e.IdGrupoBase).HasName("grupo_base_pkey");
+
+            entity.ToTable("grupo_base");
+
+            entity.Property(e => e.IdGrupoBase).HasColumnName("id_grupo_base");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(10)
+                .HasColumnName("nombre");
         });
 
         modelBuilder.Entity<Inscripcion>(entity =>
@@ -437,6 +472,19 @@ public partial class SceContext : DbContext
             entity.Property(e => e.Nomenclatura)
                 .HasMaxLength(20)
                 .HasColumnName("nomenclatura");
+        });
+
+        modelBuilder.Entity<Periodo>(entity =>
+        {
+            entity.HasKey(e => e.IdPeriodo).HasName("periodo_pkey");
+
+            entity.ToTable("periodo");
+
+            entity.Property(e => e.IdPeriodo).HasColumnName("id_periodo");
+            entity.Property(e => e.Anio).HasColumnName("anio");
+            entity.Property(e => e.Periodo1)
+                .HasMaxLength(50)
+                .HasColumnName("periodo");
         });
 
         modelBuilder.Entity<Persona>(entity =>

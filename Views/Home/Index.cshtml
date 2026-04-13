@@ -15,7 +15,7 @@
 @if (Model.Estudiante != null)
 {
     <h3>
-        Grupo: @Model.Estudiante.IdGrupoNavigation?.Grupo1
+        Grupo: @Model.Estudiante.IdGrupoNavigation?.IdGrupoBaseNavigation?.Nombre
     </h3>
     <h3>
         Estatus del alumno

@@ -12,7 +12,10 @@
         <option value="">-- Todos los grupos --</option>
         @foreach (var grupo in ViewBag.Grupos)
         {
-            <option value="@grupo.IdGrupo" selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? true.ToString().ToLower() : null)">@grupo.Grupo1</option>
+            <option value="@grupo.IdGrupo"
+                    selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? "selected" : null)">
+                @grupo.Nombre
+            </option>
         }
     </select>
     <label for="materiaSeleccionado">Seleccionar Materia:</label>
@@ -27,6 +30,28 @@
         }
     </select>
 </form>
+
+@* <form method="get" asp-action="Index">
+    <label for="grupoSeleccionado">Seleccionar Grupo:</label>
+    <select id="grupoSeleccionado" name="grupoId" class="form-select" onchange="this.form.submit()">
+        <option value="">-- Todos los grupos --</option>
+        @foreach (var grupo in ViewBag.Grupos)
+        {
+            <option value="@grupo.IdGrupo" selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? true.ToString().ToLower() : null)">@grupo.Grupo1</option>
+        }
+    </select>
+    <label for="materiaSeleccionado">Seleccionar Materia:</label>
+    <select id="materiaSeleccionado" name="materiaId" onchange="this.form.submit()">
+        <option value="">-- Todas las materias --</option>
+        @foreach (var materia in ViewBag.Materias)
+        {
+            <option value="@materia.IdMateria"
+                    selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
+                @materia.Nombre
+            </option>
+        }
+    </select>
+</form> *@
 
 <h3>Datos del profesor</h3>
 <p>Nombre: @ViewBag.Docente</p>
@@ -61,8 +86,8 @@
                         @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoPaterno ?? "")
                         @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoMaterno ?? "")
                     </td>
-                    <td>@item.IdMateriaNavigation?.Nombre</td>
-                    <td>@item.IdGrupoNavigation?.Grupo1</td>
+                    @* <td>@item.IdMateriaNavigation?.Nombre</td>
+                    <td>@item.IdGrupoNavigation?.Grupo1</td> *@
 
                     <td>
                         <select name="calificaciones[@i].Parcial1" class="form-select">

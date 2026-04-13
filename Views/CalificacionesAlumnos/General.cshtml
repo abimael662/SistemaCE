@@ -6,9 +6,20 @@
 
 <h1>General</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<form method="get">
+    <select name="grupoId" onchange="this.form.submit()">
+        <option value="">-- Todos --</option>
+
+        @foreach (var grupo in ViewBag.Grupos)
+        {
+            <option value="@grupo.IdGrupo"
+                    selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? "selected" : null)">
+                @grupo.Nombre
+            </option>
+        }
+    </select>
+</form>
+
 <table class="table">
     <thead>
         <tr>

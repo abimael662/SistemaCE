@@ -8,17 +8,25 @@
         <option value="">-- Todos los grupos --</option>
         @foreach (var grupo in ViewBag.Grupos)
         {
-            <option value="@grupo.IdGrupo" selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? "selected" : null)">@grupo.Grupo1</option>
+            <option value="@grupo.IdGrupo"
+                    selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? "selected" : null)">
+                @grupo.Nombre
+            </option>
         }
     </select>
+    <label for="materiaSeleccionado">Seleccionar Materia:</label>
     <select id="materiaSeleccionado" name="materiaId" onchange="this.form.submit()">
         <option value="">-- Todas las materias --</option>
         @foreach (var materia in ViewBag.Materias)
         {
-            <option value="@materia.IdMateria" selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">@materia.Nombre</option>
+            <option value="@materia.IdMateria"
+                    selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
+                @materia.Nombre
+            </option>
         }
     </select>
 </form>
+
 
 <input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled />
 
@@ -51,7 +59,7 @@
                     </td>
 
                     <td>
-                        @item.IdSesionNavigation?.IdGrupoNavigation?.Grupo1
+                        @item.IdSesionNavigation?.IdGrupoNavigation?.IdGrupoBaseNavigation?.Nombre
                     </td>
                     <td>
                         <select name="asistencias[@i].IdEstado"

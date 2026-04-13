@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace SistemaCE.Models;
 
@@ -32,6 +31,7 @@ public partial class CalificacionAlumno
 
     public virtual Materia? IdMateriaNavigation { get; set; }
 }
+
 
 public enum TipoCalificacion
 {

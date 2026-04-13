@@ -29,11 +29,16 @@ namespace SistemaCE.Controllers
                 .Select(d => d.IdDocenteNavigation!.Nombre + " " + d.IdDocenteNavigation.ApellidoPaterno + " " + d.IdDocenteNavigation.ApellidoMaterno)
                 .FirstOrDefaultAsync();
 
-            var gruposDocente = await (from d in _context.DocenteMateriaGrupos
-                                       join g in _context.Grupos
-                                           on d.IdGrupo equals g.IdGrupo
-                                       where d.IdDocente == idUsuario
-                                       select g).Distinct().ToListAsync();
+            var gruposDocente = await _context.DocenteMateriaGrupos
+                .Where(d => d.IdDocente == idUsuario)
+                .Select(d => d.IdGrupoNavigation)
+                .Where(g => g != null)
+                .Select(g => new {
+                    IdGrupo = g.IdGrupo,
+                    Nombre = g.IdGrupoBaseNavigation.Nombre
+                })
+                .Distinct()
+                .ToListAsync();
 
             var materias = await (from d in _context.DocenteMateriaGrupos
                                   join m in _context.Materias
@@ -173,19 +178,71 @@ namespace SistemaCE.Controllers
         }
 
         [Authorize(Roles = "estudiante")]
-        public async Task<IActionResult> General()
+        public async Task<IActionResult> General(int? grupoId)
         {
             // Obtener ID del docente logueado
             //Convertimos a entero el idUsuario
             int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
 
-            return View(await _context.CalificacionAlumnos
+            var grupos = await _context.CalificacionAlumnos
                 .Where(c => c.IdEstudiante == idUsuario)
+                .Select(c => c.IdGrupoNavigation)
+                .Select(g => new {
+                    IdGrupo = g.IdGrupo,
+                    Nombre = g.IdGrupoBaseNavigation.Nombre
+                })
+                .Distinct()
+                .ToListAsync();
+
+            if (!grupoId.HasValue && grupos.Any())
+            {
+                grupoId = grupos.First().IdGrupo;
+            }
+
+            ViewBag.Grupos = grupos;
+            ViewBag.GrupoSeleccionado = grupoId;
+
+
+            var query = _context.CalificacionAlumnos
+                .Where(c => c.IdEstudiante == idUsuario);
+
+            if (grupoId.HasValue)
+                query = query.Where(c => c.IdGrupo == grupoId.Value);
+
+            var resultado = await query
                 .Include(c => c.IdDocenteNavigation)
-                    .ThenInclude(c => c.IdDocenteNavigation)
+                    .ThenInclude(d => d.IdDocenteNavigation)
                 .Include(c => c.IdEstudianteNavigation)
                 .Include(c => c.IdMateriaNavigation)
-                .ToListAsync());
+                .ToListAsync();
+
+            return View(resultado);
+        }
+
+        [Authorize(Roles = "estudiante")]
+        public async Task<IActionResult> Cuatrimestre()
+        {
+            int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+
+
+            /// Consulta para obtener el grupo actual @GG
+            var grupoActual = await _context.Estudiantes
+                .Where(e => e.IdEstudiante == idUsuario)
+                .Select(e => e.IdGrupo)
+                .FirstOrDefaultAsync();
+
+            /// Consulta para obtener estudiantes con sus calificaciones, incluyendo estudiantes sin calificaciones @GG
+            var calificaciones = await _context.CalificacionAlumnos
+                .Where(c => c.IdEstudiante == idUsuario && c.IdGrupo == grupoActual)
+                .Include(c => c.IdDocenteNavigation)
+                    .ThenInclude(d => d.IdDocenteNavigation)
+                .Include(c => c.IdGrupoNavigation)
+                    .ThenInclude(d => d.IdGrupoBaseNavigation)
+                .Include(c => c.IdEstudianteNavigation)
+                .Include(c => c.IdMateriaNavigation)
+                .ToListAsync();
+
+            return View(calificaciones);
         }
 
 
