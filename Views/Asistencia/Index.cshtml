@@ -1,84 +1,174 @@
 ﻿@model IEnumerable<SistemaCE.Models.Asistencium>
 
-<h1>Asistencia</h1>
+@{
+    ViewData["Title"] = "Asistencia";
+}
 
-<form method="get" asp-action="Index">
-    <label for="grupoSeleccionado">Seleccionar Grupo:</label>
-    <select id="grupoSeleccionado" name="grupoId" class="form-select" onchange="this.form.submit()">
-        <option value="">-- Todos los grupos --</option>
+<div class="p-6 space-y-6">
+
+    <!-- FILTROS -->
+    <div class="bg-white p-4 rounded-2xl shadow flex flex-wrap gap-4 items-end">
+
+        <form method="get" asp-action="Index" class="flex flex-wrap gap-4 items-end w-full">
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Grupo</label>
+                <select name="grupoId"
+                        onchange="this.form.submit()"
+                        class="mt-1 rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Todos --</option>
+                    @foreach (var grupo in ViewBag.Grupos)
+                    {
+                        <option value="@grupo.IdGrupo"
+                                selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? "selected" : null)">
+                            @grupo.Nombre
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Materia</label>
+                <select name="materiaId"
+                        onchange="this.form.submit()"
+                        class="mt-1 rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Todas --</option>
+                    @foreach (var materia in ViewBag.Materias)
+                    {
+                        <option value="@materia.IdMateria"
+                                selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
+                            @materia.Nombre
+                        </option>
+                    }
+                </select>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- INFO DOCENTE -->
+    <div class="bg-white p-4 rounded-2xl shadow flex flex-wrap justify-between items-center">
+        <div>
+            <p><span class="font-medium">Docente:</span> @ViewBag.Docente</p>
+            <p><span class="font-medium">División:</span> @ViewBag.Division</p>
+        </div>
+
+        <!-- FECHA -->
+        <div>
+            <label class="block text-sm text-gray-500">Fecha</label>
+            <input type="date"
+                   value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                   disabled
+                   class="mt-1 rounded-lg border-gray-300 bg-gray-100 px-2 py-1" />
+        </div>
+    </div>
+
+    <!-- TABS DE GRUPOS -->
+    <div class="bg-white rounded-2xl shadow p-2 flex gap-2 overflow-x-auto">
+
         @foreach (var grupo in ViewBag.Grupos)
         {
-            <option value="@grupo.IdGrupo"
-                    selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? "selected" : null)">
+            var activo = ViewBag.GrupoSeleccionado == grupo.IdGrupo;
+
+            <a asp-action="Index"
+               asp-route-grupoId="@grupo.IdGrupo"
+               asp-route-materiaId="@ViewBag.MateriaSeleccionada"
+               class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap
+                          @(activo
+                                       ? "bg-blue-600 text-white shadow"
+                                       : "bg-gray-100 text-gray-700 hover:bg-gray-200")">
                 @grupo.Nombre
-            </option>
+            </a>
         }
-    </select>
-    <label for="materiaSeleccionado">Seleccionar Materia:</label>
-    <select id="materiaSeleccionado" name="materiaId" onchange="this.form.submit()">
-        <option value="">-- Todas las materias --</option>
-        @foreach (var materia in ViewBag.Materias)
-        {
-            <option value="@materia.IdMateria"
-                    selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
-                @materia.Nombre
-            </option>
-        }
-    </select>
-</form>
 
+    </div>
 
-<input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled />
+    <!-- TABLA -->
+    <form asp-action="GuardarAsistencia" method="post">
 
-<p>Docente: @ViewBag.Docente</p>
-<p>División: @ViewBag.Division</p>
+        <input type="hidden" name="idGrupo" value="@ViewBag.GrupoSeleccionado" />
+        <input type="hidden" name="idMateria" value="@ViewBag.MateriaSeleccionada" />
+        <input type="hidden" name="fecha" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
 
-<form asp-action="GuardarAsistencia" method="post">
-    <input type="hidden" name="idGrupo" value="@ViewBag.GrupoSeleccionado" />
-    <input type="hidden" name="idMateria" value="@ViewBag.MateriaSeleccionada" />
-    <input type="hidden" name="fecha" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-    <table>
-        <thead>
-            <tr>
-                <th>Alumno</th>
-                <th>Grupo</th>
-                <th>Estado</th>
-                <th>Observación</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Count(); i++)
-            {
-                var item = Model.ElementAt(i);
+        <div class="bg-white rounded-2xl shadow overflow-x-auto">
 
-                <tr>
-                    <td>
-                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.Nombre ?? "")
-                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoPaterno ?? "")
-                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoMaterno ?? "")
-                    </td>
+            <table class="min-w-full text-sm text-left">
 
-                    <td>
-                        @item.IdSesionNavigation?.IdGrupoNavigation?.IdGrupoBaseNavigation?.Nombre
-                    </td>
-                    <td>
-                        <select name="asistencias[@i].IdEstado"
-                                asp-items="ViewBag.Estados">
-                            <option value="">Seleccione un estado</option>
-                        </select>
-                    </td>
+                <!-- HEADER -->
+                <thead class="bg-gray-200 text-gray-800 text-xs uppercase">
+                    <tr>
+                        <th class="px-4 py-3 text-center">#</th>
+                        <th class="px-4 py-3">Alumno</th>
+                        <th class="px-4 py-3 text-center">Grupo</th>
+                        <th class="px-4 py-3 text-center">Estado</th>
+                        <th class="px-4 py-3 text-center">Observación</th>
+                    </tr>
+                </thead>
 
-                    <td>
-                        <input type="text" name="asistencias[@i].Observacion" value="@item.Observacion" />
-                    </td>
+                <!-- BODY -->
+                <tbody class="divide-y">
 
-                    <input type="hidden" name="asistencias[@i].IdAsistencia" value="@item.IdAsistencia" />
-                    <input type="hidden" name="asistencias[@i].IdEstudiante" value="@item.IdEstudiante" />
-                    <input type="hidden" name="asistencias[@i].IdSesion" value="@item.IdSesion" />
-                </tr>
-            }
-        </tbody>
-    </table>
+                    @for (int i = 0; i < Model.Count(); i++)
+                    {
+                        var item = Model.ElementAt(i);
 
-    <button type="submit">Guardar</button>
-</form>
+                        <tr class="hover:bg-gray-50">
+
+                            <!-- NUMERO -->
+                            <td class="px-4 py-3 text-center font-medium">
+                                @(i + 1)
+                            </td>
+
+                            <!-- ALUMNO -->
+                            <td class="px-4 py-3">
+                                @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.Nombre ?? "")
+                                @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoPaterno ?? "")
+                                @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoMaterno ?? "")
+                            </td>
+
+                            <!-- GRUPO -->
+                            <td class="px-4 py-3 text-center">
+                                @item.IdSesionNavigation?.IdGrupoNavigation?.IdGrupoBaseNavigation?.Nombre
+                            </td>
+
+                            <!-- ESTADO -->
+                            <td class="px-4 py-3 text-center">
+                                <select name="asistencias[@i].IdEstado"
+                                        class="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 text-sm"
+                                        asp-items="ViewBag.Estados">
+                                    <option value="">Seleccione</option>
+                                </select>
+                            </td>
+
+                            <!-- OBSERVACION -->
+                            <td class="px-4 py-3 text-center">
+                                <input type="text"
+                                       name="asistencias[@i].Observacion"
+                                       value="@item.Observacion"
+                                       class="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 px-2 py-1 w-full" />
+                            </td>
+
+                            <!-- HIDDEN -->
+                            <input type="hidden" name="asistencias[@i].IdAsistencia" value="@item.IdAsistencia" />
+                            <input type="hidden" name="asistencias[@i].IdEstudiante" value="@item.IdEstudiante" />
+                            <input type="hidden" name="asistencias[@i].IdSesion" value="@item.IdSesion" />
+
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- BOTÓN -->
+        <div class="flex justify-end mt-4">
+            <button type="submit"
+                    class="bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700 transition">
+                Guardar Asistencia
+            </button>
+        </div>
+
+    </form>
+
+</div>

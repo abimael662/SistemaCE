@@ -1,134 +1,190 @@
 ﻿@model IEnumerable<SistemaCE.Models.CalificacionAlumno>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Calificaciones";
 }
 
-<h1>Index</h1>
+<div class="p-6 space-y-6">
 
-<form method="get" asp-action="Index">
-    <label for="grupoSeleccionado">Seleccionar Grupo:</label>
-    <select id="grupoSeleccionado" name="grupoId" class="form-select" onchange="this.form.submit()">
-        <option value="">-- Todos los grupos --</option>
+    <!-- FILTROS -->
+    <div class="bg-white p-4 rounded-2xl shadow flex flex-wrap gap-4 items-end">
+
+        <form method="get" asp-action="Index" class="flex flex-wrap gap-4 items-end w-full">
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Grupo</label>
+                <select name="grupoId"
+                        onchange="this.form.submit()"
+                        class="mt-1 rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Todos --</option>
+                    @foreach (var grupo in ViewBag.Grupos)
+                    {
+                        <option value="@grupo.IdGrupo"
+                                selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? "selected" : null)">
+                            @grupo.Nombre
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Materia</label>
+                <select name="materiaId"
+                        onchange="this.form.submit()"
+                        class="mt-1 rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Todas --</option>
+                    @foreach (var materia in ViewBag.Materias)
+                    {
+                        <option value="@materia.IdMateria"
+                                selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
+                            @materia.Nombre
+                        </option>
+                    }
+                </select>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- INFO DOCENTE -->
+    <div class="bg-white p-4 rounded-2xl shadow">
+        <h2 class="font-semibold text-lg mb-2">Datos del profesor</h2>
+        <p><span class="font-medium">Nombre:</span> @ViewBag.Docente</p>
+        <p><span class="font-medium">División:</span> @ViewBag.Division</p>
+    </div>
+
+    <!-- TABS DE GRUPOS -->
+    <div class="bg-white rounded-2xl shadow p-2 flex gap-2 overflow-x-auto">
+
         @foreach (var grupo in ViewBag.Grupos)
         {
-            <option value="@grupo.IdGrupo"
-                    selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? "selected" : null)">
+            var activo = ViewBag.GrupoSeleccionado == grupo.IdGrupo;
+
+            <a asp-action="Index"
+               asp-route-grupoId="@grupo.IdGrupo"
+               asp-route-materiaId="@ViewBag.MateriaSeleccionada"
+               class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap
+                          @(activo
+                                       ? "bg-blue-600 text-white shadow"
+                                       : "bg-gray-100 text-gray-700 hover:bg-gray-200")">
                 @grupo.Nombre
-            </option>
+            </a>
         }
-    </select>
-    <label for="materiaSeleccionado">Seleccionar Materia:</label>
-    <select id="materiaSeleccionado" name="materiaId" onchange="this.form.submit()">
-        <option value="">-- Todas las materias --</option>
-        @foreach (var materia in ViewBag.Materias)
-        {
-            <option value="@materia.IdMateria"
-                    selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
-                @materia.Nombre
-            </option>
-        }
-    </select>
-</form>
 
-@* <form method="get" asp-action="Index">
-    <label for="grupoSeleccionado">Seleccionar Grupo:</label>
-    <select id="grupoSeleccionado" name="grupoId" class="form-select" onchange="this.form.submit()">
-        <option value="">-- Todos los grupos --</option>
-        @foreach (var grupo in ViewBag.Grupos)
-        {
-            <option value="@grupo.IdGrupo" selected="@(ViewBag.GrupoSeleccionado == grupo.IdGrupo ? true.ToString().ToLower() : null)">@grupo.Grupo1</option>
-        }
-    </select>
-    <label for="materiaSeleccionado">Seleccionar Materia:</label>
-    <select id="materiaSeleccionado" name="materiaId" onchange="this.form.submit()">
-        <option value="">-- Todas las materias --</option>
-        @foreach (var materia in ViewBag.Materias)
-        {
-            <option value="@materia.IdMateria"
-                    selected="@(ViewBag.MateriaSeleccionada == materia.IdMateria ? "selected" : null)">
-                @materia.Nombre
-            </option>
-        }
-    </select>
-</form> *@
+    </div>
 
-<h3>Datos del profesor</h3>
-<p>Nombre: @ViewBag.Docente</p>
-<p>División: @ViewBag.Division</p>
+    <!-- TABLA -->
+    <form asp-action="GuardarCalificaciones" method="post">
 
-<form asp-action="GuardarCalificaciones" method="post">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Docente</th>
-                <th>Estudiante</th>
-                <th>Materia</th>
-                <th>Grupo</th>
-                <th>Primer Parcial</th>
-                <th>Segundo Parcial</th>
-                <th>Tercer Parcial</th>
-                <th>Promedio Final</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Count(); i++)
-            {
-                var item = Model.ElementAt(i);
-                <tr>
-                    <td>
-                        @(item.IdDocenteNavigation?.IdDocenteNavigation?.Nombre ?? "")
-                        @(item.IdDocenteNavigation?.IdDocenteNavigation?.ApellidoPaterno ?? "")
-                        @(item.IdDocenteNavigation?.IdDocenteNavigation?.ApellidoMaterno ?? "")
-                    </td>
-                    <td>
-                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.Nombre ?? "")
-                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoPaterno ?? "")
-                        @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoMaterno ?? "")
-                    </td>
-                    @* <td>@item.IdMateriaNavigation?.Nombre</td>
-                    <td>@item.IdGrupoNavigation?.Grupo1</td> *@
+        <div class="bg-white rounded-2xl shadow overflow-x-auto">
 
-                    <td>
-                        <select name="calificaciones[@i].Parcial1" class="form-select">
-                            @foreach (var tipo in Enum.GetValues(typeof(TipoCalificacion)))
-                            {
-                                var valor = (int)tipo;
-                                <option value="@valor" selected="@(item.Parcial1 == valor ? "selected" : null)">@tipo</option>
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <select name="calificaciones[@i].Parcial2" class="form-select">
-                            @foreach (var tipo in Enum.GetValues(typeof(TipoCalificacion)))
-                            {
-                                var valor = (int)tipo;
-                                <option value="@valor" selected="@(item.Parcial2 == valor ? "selected" : null)">@tipo</option>
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <select name="calificaciones[@i].Parcial3" class="form-select">
-                            @foreach (var tipo in Enum.GetValues(typeof(TipoCalificacion)))
-                            {
-                                var valor = (int)tipo;
-                                <option value="@valor" selected="@(item.Parcial3 == valor ? "selected" : null)">@tipo</option>
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.PromedioFinal)
-                    </td>
+            <table class="min-w-full text-sm text-left">
 
-                    @* Campos ocultos necesarios para el binding no se les olvide si no no sirve @GG *@
-                    <input type="hidden" name="calificaciones[@i].IdCalificacion" value="@item.IdCalificacion" />
-                    <input type="hidden" name="calificaciones[@i].IdEstudiante" value="@item.IdEstudiante" />
-                    <input type="hidden" name="calificaciones[@i].IdMateria" value="@item.IdMateria" />
-                    <input type="hidden" name="calificaciones[@i].IdGrupo" value="@item.IdGrupo" />
-                </tr>
-            }
-        </tbody>
-    </table>
+                <!-- HEADER -->
+                <thead class="bg-gray-200 text-gray-800 text-xs uppercase">
+                    <tr>
+                        <th class="px-4 py-3 text-center">#</th>
+                        <th class="px-4 py-3">Alumno</th>
+                        <th class="px-4 py-3 text-center">Parcial 1</th>
+                        <th class="px-4 py-3 text-center">Parcial 2</th>
+                        <th class="px-4 py-3 text-center">Parcial 3</th>
+                        <th class="px-4 py-3 text-center">Final</th>
+                    </tr>
+                </thead>
 
-    <button type="submit" class="btn btn-primary">Guardar Calificaciones</button>
-</form>
+                <!-- BODY -->
+                <tbody class="divide-y">
+
+                    @for (int i = 0; i < Model.Count(); i++)
+                    {
+                        var item = Model.ElementAt(i);
+
+                        <tr class="hover:bg-gray-50">
+
+                            <!-- NUMERO -->
+                            <td class="px-4 py-3 text-center font-medium">
+                                @(i + 1)
+                            </td>
+
+                            <!-- ALUMNO -->
+                            <td class="px-4 py-3">
+                                @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.Nombre ?? "")
+                                @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoPaterno ?? "")
+                                @(item.IdEstudianteNavigation?.IdEstudianteNavigation?.ApellidoMaterno ?? "")
+                            </td>
+
+                            <!-- PARCIAL 1 -->
+                            <td class="px-4 py-3 text-center">
+                                <select name="calificaciones[@i].Parcial1"
+                                        class="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 text-sm">
+                                    @foreach (var tipo in Enum.GetValues(typeof(TipoCalificacion)))
+                                    {
+                                        var valor = (int)tipo;
+                                        <option value="@valor"
+                                                selected="@(item.Parcial1 == valor ? "selected" : null)">
+                                            @tipo
+                                        </option>
+                                    }
+                                </select>
+                            </td>
+
+                            <!-- PARCIAL 2 -->
+                            <td class="px-4 py-3 text-center">
+                                <select name="calificaciones[@i].Parcial2"
+                                        class="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 text-sm">
+                                    @foreach (var tipo in Enum.GetValues(typeof(TipoCalificacion)))
+                                    {
+                                        var valor = (int)tipo;
+                                        <option value="@valor"
+                                                selected="@(item.Parcial2 == valor ? "selected" : null)">
+                                            @tipo
+                                        </option>
+                                    }
+                                </select>
+                            </td>
+
+                            <!-- PARCIAL 3 -->
+                            <td class="px-4 py-3 text-center">
+                                <select name="calificaciones[@i].Parcial3"
+                                        class="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 text-sm">
+                                    @foreach (var tipo in Enum.GetValues(typeof(TipoCalificacion)))
+                                    {
+                                        var valor = (int)tipo;
+                                        <option value="@valor"
+                                                selected="@(item.Parcial3 == valor ? "selected" : null)">
+                                            @tipo
+                                        </option>
+                                    }
+                                </select>
+                            </td>
+
+                            <!-- FINAL -->
+                            <td class="px-4 py-3 text-center font-semibold">
+                                @SistemaCE.Helpers.CalificacionHelper.ObtenerLiteral(item.PromedioFinal)
+                            </td>
+
+                            <!-- HIDDEN -->
+                            <input type="hidden" name="calificaciones[@i].IdCalificacion" value="@item.IdCalificacion" />
+                            <input type="hidden" name="calificaciones[@i].IdEstudiante" value="@item.IdEstudiante" />
+                            <input type="hidden" name="calificaciones[@i].IdMateria" value="@item.IdMateria" />
+                            <input type="hidden" name="calificaciones[@i].IdGrupo" value="@item.IdGrupo" />
+
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- BOTÓN -->
+        <div class="flex justify-end mt-4">
+            <button type="submit"
+                    class="bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700 transition">
+                Guardar Calificaciones
+            </button>
+        </div>
+
+    </form>
+
+</div>

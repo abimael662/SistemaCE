@@ -27,8 +27,14 @@
                 if (User.IsInRole("docente"))
                 {
  
-                    <a href="../Views/CalificacionesAlumnos/Create.cshtml" class="block p-2 hover:bg-gray-100">Mis clases</a>
-                    <a href="#" class="block p-2 hover:bg-gray-100">Calificaciones</a>
+                    <a asp-controller="CalificacionesAlumnos" asp-action="Index"
+                       class="block p-2 hover:bg-gray-100">
+                        Asignar calificaciones
+                    </a>
+                    <a asp-controller="Asistencia" asp-action="Index"
+                       class="block p-2 hover:bg-gray-100">
+                        Listas de asistencia
+                    </a>
 
                 }
                 else if (User.IsInRole("estudiante"))
@@ -61,7 +67,7 @@
                     </button>
                 }
                 <div class="w-1/2 flex justify-center">
-                    <img class="w-16 h-16" src="~/imagenes/portatil.png" />
+                    <img class="w-16 h-16" src="~/imagenes/logotipo.png" />
                 </div>
 
                 <div class="w-1/2 flex items-center justify-end">
