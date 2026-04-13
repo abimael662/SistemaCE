@@ -1,4 +1,57 @@
-﻿@* @model SistemaCE.Models.Grupo
+﻿@model SistemaCE.Models.Grupo
+
+@{
+    ViewData["Title"] = "Eliminar Grupo";
+}
+<link rel="stylesheet" href="~/css/delete_global.css" />
+<div class="page-container">
+
+    <div class="card-delete">
+
+        <div class="title">Eliminar Grupo</div>
+        <div class="subtitle">Esta acción no se puede deshacer</div>
+
+        <div class="warning-box">
+            ⚠️ ¿Estás seguro de eliminar este registro?
+        </div>
+
+        <div class="grid">
+
+            <div class="item">
+                <div class="label">Turno</div>
+                <div class="value">@Model.Turno</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Carrera</div>
+                <div class="value">@Model.IdCarreraNavigation?.Nombre</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Grupo</div>
+                <div class="value">@Model.IdGrupoBaseNavigation?.Nombre</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Periodo</div>
+                <div class="value">@Model.IdPeriodoNavigation?.Periodo1</div>
+            </div>
+
+
+        </div>
+
+        <form asp-action="Delete" class="actions">
+            <input type="hidden" asp-for="IdGrupo" />
+
+            <a asp-action="Index" class="btn btn-back">← Cancelar</a>
+            <input type="submit" value="Eliminar" class="btn btn-delete" />
+        </form>
+
+    </div>
+
+</div>
+
+@* @model SistemaCE.Models.Grupo
 
 @{
     ViewData["Title"] = "Delete";
@@ -12,18 +65,6 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Grupo1)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Grupo1)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cuatrimestre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cuatrimestre)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Turno)
         </dt>
         <dd class = "col-sm-10">
@@ -34,6 +75,18 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.IdCarreraNavigation.IdCarrera)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdGrupoBaseNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdGrupoBaseNavigation.IdGrupoBase)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdPeriodoNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdPeriodoNavigation.IdPeriodo)
         </dd>
     </dl>
     

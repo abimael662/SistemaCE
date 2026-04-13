@@ -1,54 +1,68 @@
 ﻿@model SistemaCE.Models.Administrativo
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Administrativo";
 }
 
-<h1>Edit</h1>
+<link rel="stylesheet" href="~/css/edit_global.css" />
+<div class="page-container">
 
-<h4>Administrativo</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+    <div class="card-form">
+
+        <div class="title">Editar Administrativo</div>
+        <div class="subtitle">Modifica la información del registro</div>
+
         <form asp-action="Edit">
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <input type="hidden" asp-for="IdAdministrativo" />
-            <div class="form-group">
-                <label asp-for="NumeroEmpleado" class="control-label"></label>
-                <select asp-for="NumeroEmpleado" class="form-control" asp-items="ViewBag.NumeroEmpleado"></select>
+
+            @* <div class="form-group">
+                <label>Empleado asignado</label>
+                <select asp-for="NumeroEmpleado"
+                        class="form-control"
+                        asp-items="ViewBag.NumeroEmpleado">
+                </select>
                 <span asp-validation-for="NumeroEmpleado" class="text-danger"></span>
-            </div>
+            </div> *@
+
             <div class="form-group">
-                <label asp-for="Departamento" class="control-label"></label>
-                <input asp-for="Departamento" class="form-control" />
+                <label asp-for="Departamento"></label>
+                <input asp-for="Departamento" />
                 <span asp-validation-for="Departamento" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Puesto" class="control-label"></label>
-                <input asp-for="Puesto" class="form-control" />
+                <label asp-for="Puesto"></label>
+                <input asp-for="Puesto" />
                 <span asp-validation-for="Puesto" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Rfc" class="control-label"></label>
-                <input asp-for="Rfc" class="form-control" />
+                <label asp-for="Rfc"></label>
+                <input asp-for="Rfc" />
                 <span asp-validation-for="Rfc" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Sueldo" class="control-label"></label>
-                <input asp-for="Sueldo" class="form-control" />
+                <label asp-for="Sueldo"></label>
+                <input asp-for="Sueldo" />
                 <span asp-validation-for="Sueldo" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+            <button type="submit" class="btn-primary">Guardar cambios</button>
+
+        </form>
+
+        <a asp-action="Index" class="back-link">← Volver al listado</a>
+
+    </div>
+
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

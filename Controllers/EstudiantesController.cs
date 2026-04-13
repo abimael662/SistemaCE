@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaCE.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SistemaCE.Controllers
 {
+    [Authorize(Roles = "administrativo")]
     public class EstudiantesController : Controller
     {
         private readonly SceContext _context;
@@ -24,6 +26,7 @@ namespace SistemaCE.Controllers
             var estudiantes = await _context.Estudiantes
                 .Include(e => e.IdEstudianteNavigation)
                 .Include(e => e.IdGrupoNavigation)
+                    .ThenInclude(p => p.IdGrupoBaseNavigation)
                 .ToListAsync();
 
             return View(estudiantes);
@@ -40,6 +43,7 @@ namespace SistemaCE.Controllers
             var estudiante = await _context.Estudiantes
                 .Include(e => e.IdEstudianteNavigation)
                 .Include(e => e.IdGrupoNavigation)
+                    .ThenInclude(i => i.IdGrupoBaseNavigation)
                 .FirstOrDefaultAsync(m => m.IdEstudiante == id);
 
             if (estudiante == null)
@@ -74,7 +78,7 @@ namespace SistemaCE.Controllers
                 .ToList();
 
             ViewData["IdEstudiante"] = new SelectList(personasDisponibles, "IdPersona", "Nombre");
-            ViewData["IdGrupo"] = new SelectList(_context.Grupos, "IdGrupo", "Grupo1");
+            ViewData["IdGrupo"] = new SelectList(_context.Grupos, "IdGrupo", "IdGrupoBase");
             ViewData["Estatus"] = new SelectList(
                 Enum.GetValues(typeof(EstatusEstudiante))
                 .Cast<EstatusEstudiante>()
@@ -205,6 +209,7 @@ namespace SistemaCE.Controllers
             var estudiante = await _context.Estudiantes
                 .Include(e => e.IdEstudianteNavigation)
                 .Include(e => e.IdGrupoNavigation)
+                    .ThenInclude(i => i.IdGrupoBaseNavigation)
                 .FirstOrDefaultAsync(m => m.IdEstudiante == id);
             if (estudiante == null)
             {

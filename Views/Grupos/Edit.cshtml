@@ -1,4 +1,59 @@
-﻿@* @model SistemaCE.Models.Grupo
+﻿@model SistemaCE.Models.Grupo
+
+@{
+    ViewData["Title"] = "Editar Grupo";
+}
+
+<link rel="stylesheet" href="~/css/edit_global.css" />
+<div class="page-container">
+
+    <div class="card-form">
+
+        <div class="title">Editar Grupo</div>
+        <div class="subtitle">Modifica la información del registro</div>
+
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdGrupo" />
+            <div class="form-group">
+                <label asp-for="IdCarrera" class="control-label"></label>
+                <select asp-for="IdCarrera" class="form-control" asp-items="ViewBag.IdCarrera"></select>
+                <span asp-validation-for="IdCarrera" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Turno" class="control-label"></label>
+                <input asp-for="Turno" class="form-control" />
+                <span asp-validation-for="Turno" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdGrupoBase" class="control-label"></label>
+                <select asp-for="IdGrupoBase" class="form-control" asp-items="ViewBag.IdGrupoBase"></select>
+                <span asp-validation-for="IdGrupoBase" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdPeriodo" class="control-label"></label>
+                <select asp-for="IdPeriodo" class="form-control" asp-items="ViewBag.IdPeriodo"></select>
+                <span asp-validation-for="IdPeriodo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+
+        </form>
+
+        <a asp-action="Index" class="back-link">← Volver al listado</a>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@* @model SistemaCE.Models.Grupo
 
 @{
     ViewData["Title"] = "Edit";
@@ -19,19 +74,19 @@
                 <span asp-validation-for="IdCarrera" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Grupo1" class="control-label"></label>
-                <input asp-for="Grupo1" class="form-control" />
-                <span asp-validation-for="Grupo1" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cuatrimestre" class="control-label"></label>
-                <input asp-for="Cuatrimestre" class="form-control" />
-                <span asp-validation-for="Cuatrimestre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Turno" class="control-label"></label>
                 <input asp-for="Turno" class="form-control" />
                 <span asp-validation-for="Turno" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdGrupoBase" class="control-label"></label>
+                <select asp-for="IdGrupoBase" class="form-control" asp-items="ViewBag.IdGrupoBase"></select>
+                <span asp-validation-for="IdGrupoBase" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdPeriodo" class="control-label"></label>
+                <select asp-for="IdPeriodo" class="form-control" asp-items="ViewBag.IdPeriodo"></select>
+                <span asp-validation-for="IdPeriodo" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

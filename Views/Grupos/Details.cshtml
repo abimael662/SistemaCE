@@ -1,4 +1,51 @@
-﻿@* @model SistemaCE.Models.Grupo
+﻿@model SistemaCE.Models.Grupo
+
+@{
+    ViewData["Title"] = "Detalles Grupo";
+}
+
+<link rel="stylesheet" href="~/css/details_global.css" />
+<div class="page-container">
+
+    <div class="card-details">
+
+        <div class="title">Detalles del Grupo</div>
+        <div class="subtitle">Información completa del registro</div>
+
+        <div class="grid">
+
+            <div class="item">
+                <div class="label">Turno</div>
+                <div class="value">@Model.Turno</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Carrera</div>
+                <div class="value">@Model.IdCarreraNavigation?.Nombre</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Grupo</div>
+                <div class="value">@Model.IdGrupoBaseNavigation?.Nombre</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Periodo</div>
+                <div class="value">@Model.IdPeriodoNavigation?.Periodo1</div>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <a asp-action="Edit" asp-route-id="@Model?.IdGrupo" class="btn btn-edit">Editar</a>
+            <a asp-action="Index" class="btn btn-back">← Volver</a>
+        </div>
+
+    </div>
+
+</div>
+
+@* @model SistemaCE.Models.Grupo
 
 @{
     ViewData["Title"] = "Details";
@@ -11,18 +58,6 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Grupo1)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Grupo1)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cuatrimestre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cuatrimestre)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Turno)
         </dt>
         <dd class = "col-sm-10">
@@ -33,6 +68,18 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.IdCarreraNavigation.IdCarrera)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdGrupoBaseNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdGrupoBaseNavigation.IdGrupoBase)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdPeriodoNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdPeriodoNavigation.IdPeriodo)
         </dd>
     </dl>
 </div>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.Extensions.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace SistemaCE.Models;
@@ -19,8 +21,10 @@ public partial class Docente
 
     public virtual ICollection<DocenteMateriaGrupo> DocenteMateriaGrupos { get; set; } = new List<DocenteMateriaGrupo>();
 
+    [ValidateNever]
     public virtual Persona IdDocenteNavigation { get; set; } = null!;
 
+    [ValidateNever]
     public virtual Empleado? NumeroEmpleadoNavigation { get; set; }
 
     public virtual ICollection<SesionClase> SesionClases { get; set; } = new List<SesionClase>();

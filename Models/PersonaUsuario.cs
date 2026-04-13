@@ -11,5 +11,5 @@ public partial class PersonaUsuario
 
     public string? Password { get; set; }
 
-    public virtual Persona IdPersonaNavigation { get; set; } = null!;
+    public virtual Persona? IdPersonaNavigation { get; set; }
 }

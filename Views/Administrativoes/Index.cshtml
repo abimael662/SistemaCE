@@ -1,65 +1,68 @@
 ﻿@model IEnumerable<SistemaCE.Models.Administrativo>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Administrativos";
 }
+<link rel="stylesheet" href="~/css/index_global.css" />
 
-<h1>Index</h1>
+<div class="page-container">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Departamento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Puesto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rfc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sueldo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdAdministrativoNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumeroEmpleadoNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Departamento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Puesto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rfc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sueldo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdAdministrativoNavigation.IdPersona)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumeroEmpleadoNavigation.IdEmpleado)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdAdministrativo">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdAdministrativo">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdAdministrativo">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="header">
+        <h1>Administrativos</h1>
+
+        <a asp-action="Create" class="btn-create">
+            + Nuevo registro
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Departamento</th>
+                    <th>Puesto</th>
+                    <th>RFC</th>
+                    <th>Sueldo</th>
+                    <th>Usuario</th>
+                    <th>Empleado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Departamento</td>
+                        <td>@item.Puesto</td>
+                        <td>@item.Rfc</td>
+
+                        <td>
+                            @string.Format(System.Globalization.CultureInfo.GetCultureInfo("es-MX"), "{0:C}", item.Sueldo)
+                        </td>
+
+                        <td>
+                            @string.Join(" ",
+                                item.IdAdministrativoNavigation?.Nombre ?? "",
+                                item.IdAdministrativoNavigation?.ApellidoPaterno ?? "",
+                                item.IdAdministrativoNavigation?.ApellidoMaterno ?? ""
+                            )
+                        </td>
+
+                        <td>
+                            @item.NumeroEmpleadoNavigation?.TipoEmpleado
+                        </td>
+
+                        <td class="actions">
+                            <a asp-action="Edit" asp-route-id="@item.IdAdministrativo">Editar</a>
+                            <a asp-action="Details" asp-route-id="@item.IdAdministrativo">Ver</a>
+                            <a asp-action="Delete" asp-route-id="@item.IdAdministrativo">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+</div>

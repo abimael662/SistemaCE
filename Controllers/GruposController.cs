@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaCE.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SistemaCE.Controllers
 {
+    [Authorize(Roles = "administrativo")]
     public class GruposController : Controller
     {
         private readonly SceContext _context;
@@ -21,7 +23,11 @@ namespace SistemaCE.Controllers
         // GET: Grupos
         public async Task<IActionResult> Index()
         {
-            var sceContext = _context.Grupos.Include(g => g.IdCarreraNavigation);
+            var sceContext = _context.Grupos
+                .Include(g => g.IdCarreraNavigation)
+                .Include(g => g.IdGrupoBaseNavigation)
+                .Include(g => g.IdPeriodoNavigation);
+
             return View(await sceContext.ToListAsync());
         }
 
@@ -35,6 +41,8 @@ namespace SistemaCE.Controllers
 
             var grupo = await _context.Grupos
                 .Include(g => g.IdCarreraNavigation)
+                .Include(g => g.IdGrupoBaseNavigation)
+                .Include(g => g.IdPeriodoNavigation)
                 .FirstOrDefaultAsync(m => m.IdGrupo == id);
             if (grupo == null)
             {
@@ -47,7 +55,9 @@ namespace SistemaCE.Controllers
         // GET: Grupos/Create
         public IActionResult Create()
         {
-            ViewData["IdCarrera"] = new SelectList(_context.Carreras, "IdCarrera", "IdCarrera");
+            ViewData["IdCarrera"] = new SelectList(_context.Carreras, "IdCarrera", "Nombre");
+            ViewData["IdGrupoBase"] = new SelectList(_context.GrupoBases, "IdGrupoBase", "Nombre");
+            ViewData["IdPeriodo"] = new SelectList(_context.Periodos, "IdPeriodo", "Periodo1");
             return View();
         }
 
@@ -81,7 +91,10 @@ namespace SistemaCE.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdCarrera"] = new SelectList(_context.Carreras, "IdCarrera", "IdCarrera", grupo.IdCarrera);
+            ViewData["IdGrupoBase"] = new SelectList(_context.GrupoBases, "IdGrupoBase", "Nombre", grupo.IdGrupoBase);
+            ViewData["IdCarrera"] = new SelectList(_context.Carreras, "IdCarrera", "Nombre", grupo.IdCarrera);
+            ViewData["IdPeriodo"] = new SelectList(_context.Periodos, "IdPeriodo", "Periodo1", grupo.IdPeriodo);
+
             return View(grupo);
         }
 
@@ -131,6 +144,8 @@ namespace SistemaCE.Controllers
 
             var grupo = await _context.Grupos
                 .Include(g => g.IdCarreraNavigation)
+                .Include(g => g.IdGrupoBaseNavigation)
+                .Include(g => g.IdPeriodoNavigation)
                 .FirstOrDefaultAsync(m => m.IdGrupo == id);
             if (grupo == null)
             {

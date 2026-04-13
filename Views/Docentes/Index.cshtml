@@ -1,59 +1,67 @@
 ﻿@model IEnumerable<SistemaCE.Models.Docente>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Docentes";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/index_global.css" />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CedulaProfesional)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rfc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sueldo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdDocenteNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumeroEmpleadoNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CedulaProfesional)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rfc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sueldo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdDocenteNavigation.IdPersona)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumeroEmpleadoNavigation.IdEmpleado)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdDocente">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdDocente">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdDocente">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="page-container">
+
+    <div class="header">
+        <h1>Docentes</h1>
+
+        <a asp-action="Create" class="btn-create">
+            + Nuevo registro
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Cédula Profesional</th>
+                    <th>RFC</th>
+                    <th>Sueldo</th>
+                    <th>Persona</th>
+                    <th>Empleado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.CedulaProfesional</td>
+                        <td>@item.Rfc</td>
+
+                        <td>
+                            @string.Format(System.Globalization.CultureInfo.GetCultureInfo("es-MX"), "{0:C}", item.Sueldo)
+                        </td>
+
+                        <td>
+                            @string.Join(" ",
+                                item.IdDocenteNavigation?.Nombre ?? "",
+                                item.IdDocenteNavigation?.ApellidoPaterno ?? "",
+                                item.IdDocenteNavigation?.ApellidoMaterno ?? ""
+                            )
+                        </td>
+
+                        <td>
+                            @item.NumeroEmpleadoNavigation?.TipoEmpleado
+                        </td>
+
+                        <td class="actions">
+                            <a asp-action="Edit" asp-route-id="@item.IdDocente">Editar</a>
+                            <a asp-action="Details" asp-route-id="@item.IdDocente">Ver</a>
+                            <a asp-action="Delete" asp-route-id="@item.IdDocente">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+</div>

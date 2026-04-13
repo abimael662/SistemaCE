@@ -1,78 +1,106 @@
-﻿@* @model IEnumerable<SistemaCE.Models.Grupo>
+﻿@model IEnumerable<SistemaCE.Models.Grupo>
 
 @{
     ViewData["Title"] = "Grupos";
 }
 
-<div class="max-w-6xl mx-auto px-4 py-8">
+<link rel="stylesheet" href="~/css/index_global.css" />
 
-    <!-- HEADER -->
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">Grupos</h1>
-        <a asp-action="Create"
-           class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
+<div class="page-container">
+
+    <div class="header">
+        <h1>Grupos</h1>
+
+        <a asp-action="Create" class="btn-create">
             + Nuevo Grupo
         </a>
     </div>
 
-    <!-- TABLE -->
-    <div class="bg-white shadow-md rounded-xl overflow-hidden">
-        <table class="min-w-full text-sm text-gray-600">
+    <div class="table-container">
 
-            <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+        <table class="custom-table">
+            <thead>
                 <tr>
-                    <th class="px-6 py-3">Grupo</th>
-                    <th class="px-6 py-3">Cuatrimestre</th>
-                    <th class="px-6 py-3">Turno</th>
-                    <th class="px-6 py-3">Carrera</th>
+                    <th>Turno</th>
+                    <th>Carrera</th>
+                    <th>Grupo</th>
+                    <th>Periodo</th>
                     <th class="px-6 py-3 text-center">Acciones</th>
                 </tr>
             </thead>
 
-            <tbody class="divide-y">
-
+            <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr class="hover:bg-gray-50">
+                    <tr>
+                        <td>@item.Turno</td>
+                        <td>@item.IdCarreraNavigation?.Nombre</td>
+                        <td>@item.IdGrupoBaseNavigation?.Nombre</td>
+                        <td>@item.IdPeriodoNavigation?.Periodo1</td>
 
-                        <td class="px-6 py-4 font-medium text-gray-900">
-                            @item.Grupo1
-                        </td>
-
-                        <td class="px-6 py-4">
-                            @item.Cuatrimestre
-                        </td>
-
-                        <td class="px-6 py-4">
-                            @item.Turno
-                        </td>
-
-                        <td class="px-6 py-4">
-                            @item.IdCarreraNavigation?.Nombre
-                        </td>
-
-                        <td class="px-6 py-4 text-center space-x-2">
-
-                            <a asp-action="Edit" asp-route-id="@item.IdGrupo"
-                               class="bg-yellow-400 text-white px-3 py-1 rounded">
-                                Editar
-                            </a>
-
-                            <a asp-action="Details" asp-route-id="@item.IdGrupo"
-                               class="bg-blue-500 text-white px-3 py-1 rounded">
-                                Ver
-                            </a>
-
-                            <a asp-action="Delete" asp-route-id="@item.IdGrupo"
-                               class="bg-red-500 text-white px-3 py-1 rounded">
-                                Eliminar
-                            </a>
-
+                        <td class="actions">
+                            <a asp-action="Edit" asp-route-id="@item.IdGrupo">Editar</a>
+                            <a asp-action="Details" asp-route-id="@item.IdGrupo">Ver</a>
+                            <a asp-action="Delete" asp-route-id="@item.IdGrupo">Eliminar</a>
                         </td>
                     </tr>
                 }
-
             </tbody>
         </table>
+
     </div>
-</div> *@
+</div>
+
+@* @model IEnumerable<SistemaCE.Models.Grupo>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Turno)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdCarreraNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdGrupoBaseNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdPeriodoNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Turno)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdCarreraNavigation.IdCarrera)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdGrupoBaseNavigation.IdGrupoBase)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdPeriodoNavigation.IdPeriodo)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdGrupo">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdGrupo">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdGrupo">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table> *@

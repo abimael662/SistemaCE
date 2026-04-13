@@ -10,7 +10,6 @@ using SistemaCE.Models;
 
 namespace SistemaCE.Controllers
 {
-    [Authorize(Roles="docente")]
     public class DocentesController : Controller
     {
         private readonly SceContext _context;
@@ -165,6 +164,7 @@ namespace SistemaCE.Controllers
 
             return View(docente);
         }
+
         // GET: Docentes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -179,7 +179,7 @@ namespace SistemaCE.Controllers
                 return NotFound();
             }
             ViewData["IdDocente"] = new SelectList(_context.Personas, "IdPersona", "IdPersona", docente.IdDocente);
-            ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "IdEmpleado", docente.NumeroEmpleado);
+            //ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "IdEmpleado", docente.NumeroEmpleado);
             return View(docente);
         }
 
@@ -188,7 +188,7 @@ namespace SistemaCE.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdDocente,NumeroEmpleado,CedulaProfesional,Rfc,Sueldo")] Docente docente)
+        public async Task<IActionResult> Edit(int id, [Bind("IdDocente,CedulaProfesional,Rfc,Sueldo")] Docente docente)
         {
             if (id != docente.IdDocente)
             {
@@ -199,7 +199,18 @@ namespace SistemaCE.Controllers
             {
                 try
                 {
-                    _context.Update(docente);
+                    var existente = await _context.Docentes
+                .FirstOrDefaultAsync(a => a.IdDocente == id);
+
+                    if (existente == null)
+                    {
+                        return NotFound();
+                    }
+
+                    existente.CedulaProfesional = docente.CedulaProfesional;
+                    existente.Rfc = docente.Rfc;
+                    existente.Sueldo = docente.Sueldo;
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -216,7 +227,7 @@ namespace SistemaCE.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["IdDocente"] = new SelectList(_context.Personas, "IdPersona", "IdPersona", docente.IdDocente);
-            ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "IdEmpleado", docente.NumeroEmpleado);
+            //ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "IdEmpleado", docente.NumeroEmpleado);
             return View(docente);
         }
 
