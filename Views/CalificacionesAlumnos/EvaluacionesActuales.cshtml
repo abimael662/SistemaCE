@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Evaluaciones Actuales";
+    Layout = "_Layout";
+}
+
+@model List<SistemaCE.Models.CalificacionAlumno>
+
+<h2 class="text-2xl font-bold mb-4">Mis Calificaciones</h2>
+
+<table class="w-full border border-gray-300">
+    <thead class="bg-gray-200">
+        <tr>
+            <th class="p-2">Materia</th>
+            <th class="p-2">Docente</th>
+            <th class="p-2">Parcial 1</th>
+            <th class="p-2">Parcial 2</th>
+            <th class="p-2">Parcial 3</th>
+            <th class="p-2">Promedio</th>
+            <th class="p-2">Grupo</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="border-t">
+                <td class="p-2">
+                    @item.IdMateriaNavigation?.Nombre
+                </td>
+
+                <td class="p-2">
+                    @item.IdDocenteNavigation?.IdDocenteNavigation?.Nombre
+                </td>
+
+                <td class="p-2">@item.Parcial1</td>
+                <td class="p-2">@item.Parcial2</td>
+                <td class="p-2">@item.Parcial3</td>
+                <td class="p-2 font-bold">@item.PromedioFinal</td>
+                <td class="p-2 font-bold">@item.IdGrupoNavigation?.Grupo1</td>
+            </tr>
+        }
+    </tbody>
+</table>

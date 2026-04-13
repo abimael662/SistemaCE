@@ -26,15 +26,17 @@
             {
                 if (User.IsInRole("docente"))
                 {
-                    <div>Historia Academica
+ 
                     <a href="../Views/CalificacionesAlumnos/Create.cshtml" class="block p-2 hover:bg-gray-100">Mis clases</a>
                     <a href="#" class="block p-2 hover:bg-gray-100">Calificaciones</a>
-                    </div>
+
                 }
                 else if (User.IsInRole("estudiante"))
                 {
-                    <a href="#" class="block p-2 hover:bg-gray-100">📖 Mis materias</a>
+                    <div>Historia Academica
+                        <a href="/CalificacionesAlumnos/EvaluacionesActuales" class="block p-2 hover:bg-gray-100">Evaluaciones Actuales</a>
                     <a href="#" class="block p-2 hover:bg-gray-100">📊 Mis notas</a>
+                    </div>
                 }
                 else
                 {

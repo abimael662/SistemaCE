@@ -436,7 +436,6 @@ namespace SistemaCE.Controllers
             {
                 _context.Divisions.Remove(division);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -444,6 +443,20 @@ namespace SistemaCE.Controllers
         private bool DivisionExists(int id)
         {
             return _context.Divisions.Any(e => e.IdDivision == id);
+        }
+        [Authorize(Roles = "estudiante")]
+        public IActionResult EvaluacionesActuales()
+        {
+            int idUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+
+            var data = _context.CalificacionAlumnos
+                .Include(c => c.IdMateriaNavigation)
+                .Include(c => c.IdDocenteNavigation)
+                .Include(c=> c.IdGrupoNavigation)
+                .Where(c => c.IdEstudiante == idUsuario)
+                .ToList();
+
+            return View(data);
         }
     }
 
