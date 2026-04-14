@@ -15,6 +15,7 @@ namespace SistemaCE.Controllers
     {
         private readonly SceContext _context;
         private const string ViewBagIdAdministrativo = "IdAdministrativo";
+        private const string PersonaIdField = "IdPersona";
 
         public AdministrativoesController(SceContext context)
         {
@@ -31,19 +32,10 @@ namespace SistemaCE.Controllers
         // GET: Administrativoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var administrativo = await GetAdministrativoById(id);
 
-            var administrativo = await _context.Administrativos
-                .Include(a => a.IdAdministrativoNavigation)
-                .Include(a => a.NumeroEmpleadoNavigation)
-                .FirstOrDefaultAsync(m => m.IdAdministrativo == id);
             if (administrativo == null)
-            {
                 return NotFound();
-            }
 
             return View(administrativo);
         }
@@ -77,7 +69,7 @@ namespace SistemaCE.Controllers
                                      (p.ApellidoMaterno ?? "")
                 }).ToList();
 
-                ViewData[ViewBagIdAdministrativo]  = new SelectList(personasSelect, "IdPersona", "NombreCompleto", null);
+                ViewData[ViewBagIdAdministrativo]  = new SelectList(personasSelect, PersonaIdField, "NombreCompleto", null);
             }
 
             ViewData["NumeroEmpleado"] = new SelectList(empleados, "IdEmpleado", "NumeroEmpleado", null);
@@ -142,7 +134,7 @@ namespace SistemaCE.Controllers
                 .ToList();
 
             ViewData[ViewBagIdAdministrativo]  =
-                new SelectList(personas, "IdPersona", "NombreCompleto", administrativo.IdAdministrativo);
+                new SelectList(personas, PersonaIdField, "NombreCompleto", administrativo.IdAdministrativo);
 
             var empleados = _context.Empleados.ToList();
 
@@ -166,8 +158,7 @@ namespace SistemaCE.Controllers
                 return NotFound();
             }
 
-            ViewData[ViewBagIdAdministrativo]  = new SelectList(_context.Personas, "IdPersona", "IdPersona", administrativo.IdAdministrativo);
-            //ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "TipoEmpleado", administrativo.NumeroEmpleado);
+            ViewData[ViewBagIdAdministrativo]  = new SelectList(_context.Personas, PersonaIdField, PersonaIdField, administrativo.IdAdministrativo);
 
             return View(administrativo);
         }
@@ -207,19 +198,10 @@ namespace SistemaCE.Controllers
         // GET: Administrativoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var administrativo = await GetAdministrativoById(id);
 
-            var administrativo = await _context.Administrativos
-                .Include(a => a.IdAdministrativoNavigation)
-                .Include(a => a.NumeroEmpleadoNavigation)
-                .FirstOrDefaultAsync(m => m.IdAdministrativo == id);
             if (administrativo == null)
-            {
                 return NotFound();
-            }
 
             return View(administrativo);
         }
@@ -242,6 +224,17 @@ namespace SistemaCE.Controllers
         private bool AdministrativoExists(int id)
         {
             return _context.Administrativos.Any(e => e.IdAdministrativo == id);
+        }
+
+        private async Task<Administrativo?> GetAdministrativoById(int? id)
+        {
+            if (id == null)
+                return null;
+
+            return await _context.Administrativos
+                .Include(a => a.IdAdministrativoNavigation)
+                .Include(a => a.NumeroEmpleadoNavigation)
+                .FirstOrDefaultAsync(m => m.IdAdministrativo == id);
         }
     }
 }
