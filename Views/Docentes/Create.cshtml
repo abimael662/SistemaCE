@@ -18,29 +18,27 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">
-                <label>Persona</label>
-                <select asp-for="IdDocente"
-                        class="form-control"
-                        asp-items="ViewBag.IdDocente">
+                <label asp-for="IdDocente">Usuario</label>
+                <select asp-for="IdDocente" class="form-control" asp-items="ViewBag.IdDocente">
                     <option value="">Seleccione una persona</option>
                 </select>
                 <span asp-validation-for="IdDocente" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="CedulaProfesional"></label>
+                <label asp-for="CedulaProfesional">Cedula Profesional</label>
                 <input asp-for="CedulaProfesional" />
                 <span asp-validation-for="CedulaProfesional" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Rfc"></label>
+                <label asp-for="Rfc">RFC</label>
                 <input asp-for="Rfc" />
                 <span asp-validation-for="Rfc" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Sueldo"></label>
+                <label asp-for="Sueldo">Sueldo</label>
                 <input asp-for="Sueldo" type="number" step="0.01" />
                 <span asp-validation-for="Sueldo" class="text-danger"></span>
             </div>

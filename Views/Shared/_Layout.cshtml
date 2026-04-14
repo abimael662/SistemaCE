@@ -10,7 +10,11 @@
 
 <body class="bg-gray-100">
 
-    <div id="overlay" class="hidden fixed inset-0 bg-black/40 z-40" onclick="toggleSidebar()" role="button"></div>
+    <button id="overlay"
+            class="hidden fixed inset-0 bg-black/40 z-40"
+            onclick="toggleSidebar()"
+            aria-label="Cerrar menú">
+    </button>
 
     <div id="sidebar"
          class="fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50
@@ -70,7 +74,7 @@
                     </button>
                 }
                 <div class="w-1/2 flex justify-center">
-                    <img class="w-16 h-16" src="~/imagenes/logotipo.png" />
+                    <img class="w-16 h-16" src="~/imagenes/logotipo.png" alt="Logo" />
                 </div>
 
                 <div class="w-1/2 flex items-center justify-end">

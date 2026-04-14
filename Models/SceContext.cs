@@ -58,7 +58,7 @@ public partial class SceContext : DbContext
 
     public virtual DbSet<Titulacion> Titulacions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
