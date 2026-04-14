@@ -24,7 +24,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">
+                    <label asp-for="IdEstudiante" class="block text-sm font-medium text-gray-700">
                         Estudiante
                     </label>
                     <select asp-for="IdEstudiante"
@@ -34,7 +34,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">
+                    <label asp-for="IdMateria" class="block text-sm font-medium text-gray-700">
                         Materia
                     </label>
                     <select asp-for="IdMateria"
@@ -44,7 +44,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">
+                    <label asp-for="IdGrupo" class="block text-sm font-medium text-gray-700">
                         Grupo
                     </label>
                     <select asp-for="IdGrupo"
@@ -59,7 +59,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">
+                    <label asp-for="Parcial1" class="block text-sm font-medium text-gray-700">
                         Parcial 1
                     </label>
                     <input asp-for="Parcial1"
@@ -67,7 +67,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">
+                    <label asp-for="Parcial2" class="block text-sm font-medium text-gray-700">
                         Parcial 2
                     </label>
                     <input asp-for="Parcial2"
@@ -75,7 +75,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">
+                    <label asp-for="Parcial3" class="block text-sm font-medium text-gray-700">
                         Parcial 3
                     </label>
                     <input asp-for="Parcial3"
@@ -86,7 +86,7 @@
 
             <!-- PROMEDIO -->
             <div class="pt-4 border-t">
-                <label class="block text-sm font-medium text-gray-700">
+                <label asp-for="PromedioFinal" class="block text-sm font-medium text-gray-700">
                     Promedio Final
                 </label>
                 <input asp-for="PromedioFinal"
