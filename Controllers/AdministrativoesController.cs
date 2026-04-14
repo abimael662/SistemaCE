@@ -14,6 +14,7 @@ namespace SistemaCE.Controllers
     public class AdministrativoesController : Controller
     {
         private readonly SceContext _context;
+        private const string ViewBagIdAdministrativo = "IdAdministrativo";
 
         public AdministrativoesController(SceContext context)
         {
@@ -64,7 +65,7 @@ namespace SistemaCE.Controllers
 
             if (!personasDisponibles.Any())
             {
-                ViewData["IdAdministrativo"] = new SelectList(Enumerable.Empty<object>());
+                ViewData[ViewBagIdAdministrativo]  = new SelectList(Enumerable.Empty<object>());
             }
             else
             {
@@ -76,7 +77,7 @@ namespace SistemaCE.Controllers
                                      (p.ApellidoMaterno ?? "")
                 }).ToList();
 
-                ViewData["IdAdministrativo"] = new SelectList(personasSelect, "IdPersona", "NombreCompleto", null);
+                ViewData[ViewBagIdAdministrativo]  = new SelectList(personasSelect, "IdPersona", "NombreCompleto", null);
             }
 
             ViewData["NumeroEmpleado"] = new SelectList(empleados, "IdEmpleado", "NumeroEmpleado", null);
@@ -140,7 +141,7 @@ namespace SistemaCE.Controllers
                 })
                 .ToList();
 
-            ViewData["IdAdministrativo"] =
+            ViewData[ViewBagIdAdministrativo]  =
                 new SelectList(personas, "IdPersona", "NombreCompleto", administrativo.IdAdministrativo);
 
             var empleados = _context.Empleados.ToList();
@@ -165,7 +166,7 @@ namespace SistemaCE.Controllers
                 return NotFound();
             }
 
-            ViewData["IdAdministrativo"] = new SelectList(_context.Personas, "IdPersona", "IdPersona", administrativo.IdAdministrativo);
+            ViewData[ViewBagIdAdministrativo]  = new SelectList(_context.Personas, "IdPersona", "IdPersona", administrativo.IdAdministrativo);
             //ViewData["NumeroEmpleado"] = new SelectList(_context.Empleados, "IdEmpleado", "TipoEmpleado", administrativo.NumeroEmpleado);
 
             return View(administrativo);
