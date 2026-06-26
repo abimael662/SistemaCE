@@ -1,11 +1,11 @@
-# 🎓 SistemCE  
+# 🎓 SistemaCE  
 ### *Gestión escolar integral para control académico y administrativo*
 
 ---
 
 ## 🧠 Descripción del proyecto
 
-**SistemCE** es un sistema de gestión escolar desarrollado en **C# con .NET**, enfocado en la administración completa de instituciones educativas.
+**SistemaCE** es un sistema de gestión escolar desarrollado en **C# con .NET**, enfocado en la administración completa de instituciones educativas.
 
 Permite gestionar procesos académicos como control de asistencia, calificaciones, grupos, inscripciones y procesos de titulación, centralizando toda la información en una plataforma estructurada.
 
@@ -29,7 +29,7 @@ Esto genera ineficiencia, errores y pérdida de tiempo en la administración esc
 
 ## 💡 Solución
 
-**SistemCE** centraliza los procesos escolares en un solo sistema:
+**SistemaCE** centraliza los procesos escolares en un solo sistema:
 
 - 📋 Control de asistencia por grupo y alumno  
 - 📊 Registro y consulta de calificaciones  
@@ -54,7 +54,7 @@ Esto genera ineficiencia, errores y pérdida de tiempo en la administración esc
 
 ## 📊 Resultados obtenidos
 
-Con la implementación de SistemCE se logró:
+Con la implementación de SistemaCE se logró:
 
 - 📉 Reducción del tiempo en procesos administrativos escolares  
 - 📚 Centralización de información académica  
@@ -66,7 +66,7 @@ Con la implementación de SistemCE se logró:
 
 ## 🎯 Impacto del proyecto
 
-SistemCE optimiza la gestión educativa al digitalizar procesos clave de instituciones escolares, reduciendo errores manuales y mejorando el control académico y administrativo.
+SistemaCE optimiza la gestión educativa al digitalizar procesos clave de instituciones escolares, reduciendo errores manuales y mejorando el control académico y administrativo.
 
 ---
 
